@@ -18,6 +18,8 @@ Keep the upstream global batch fixed: **512** for the default configuration. Ask
 
 Only exact divisors are accepted. The default ladder tries divisors from 64 down to 1. Explicit invalid candidates fail before GPU work. Reducing microbatch never changes global batch or learning rate. The probe simulates one target rank: for 8 GPUs, every G update consumes 64 images on the tested device regardless of microbatch. Its output separately records the executed single-rank batch and planned global batch; this is not an executed 512-image distributed update.
 
+If memory is insufficient, first reduce the microbatch and increase gradient accumulation while keeping the global batch fixed. If this still does not fit, consider gradient checkpointing and tune the number of checkpointed decoder layers. **Agent hint:** check implementation and configuration support first, then validate correctness, peak memory, and step time across all three training phases.
+
 ## First run: 80 GiB
 
 ```bash

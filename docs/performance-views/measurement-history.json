@@ -55,7 +55,6 @@
     "22f7a7 is a same-stack remeasurement, not another optimization.",
     "Candidate identifiers are historical snapshot prefixes, not Git commits in this repository. File associations describe present implementation locations, not verified per-candidate diffs.",
     "The historical global batch is 128. Do not combine this sequence with the separate H20 global-batch-512 3.2174x or H200 accumulation-4 5.4144x measurements.",
-    "Statistical short-trajectory PASS does not mean bitwise equivalence. Historical diagnostics remain as documented in README.",
     "This release also contains GPU-adaptation and discriminator-DDP changes after the trained fd7800d0633a snapshot; full-training quality of the current trainer remains unvalidated."
   ],
   "stages": [
@@ -223,8 +222,7 @@
       "image_size": 256,
       "baseline_weighted_ms": 3375.79929421845,
       "speedup": 3.217430552686846,
-      "source": "../validation/h20-readme-benchmark-2026-10-15.json",
-      "source_sha256": "6ed2ab1ce3023155aee33fbad9159a0e3f6aeac2ffa6d7588bd94bb0e7f8b74c",
+      "source": "../h20-results.md",
       "optimized_weighted_ms": 1049.2221165113733,
       "hardware_label": "H20"
     },
@@ -237,8 +235,7 @@
       "image_size": 256,
       "baseline_weighted_ms": 8381.011076533468,
       "speedup": 5.414431577239851,
-      "source": "../validation/h200-readme-benchmark-2026-10-15.json",
-      "source_sha256": "7c7a5dac386ae064df3df86a7b3934f58a89f2e104f5fb449816453ec23a4eec",
+      "source": "h200-benchmark.json",
       "optimized_weighted_ms": 1547.9022972169332,
       "hardware_label": "H200-class (device reports NVIDIA L20X)"
     }

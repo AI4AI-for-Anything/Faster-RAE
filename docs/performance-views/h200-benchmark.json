@@ -1,0 +1,22 @@
+{
+  "complete": true,
+  "baseline_weighted_ms": 8381.011076533468,
+  "speedup": 5.414431577239851,
+  "global_batch_size": 512,
+  "world_size": 2,
+  "micro_batch_size": 64,
+  "gradient_accumulation_steps": 4,
+  "image_size": 256,
+  "phase_weights": {
+    "recon": 6,
+    "disc": 2,
+    "gan": 8
+  },
+  "runs": {
+    "faster": {
+      "weighted_ms_per_step": 1547.9022972169332
+    }
+  },
+  "hardware": "H200 host; devices report NVIDIA L20X, Hopper SM90, approximately 140 GiB per GPU",
+  "timing": "Same trainer, data and batch plan; preset off/on. Baseline averages runs before and after the optimized run. Compilation, warmup, checkpoint saving and evaluation excluded."
+}
