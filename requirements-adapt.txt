@@ -1,0 +1,7 @@
+# Tested application versions; install torch 2.8.0 / torchvision 0.23.0 cu128 first.
+-r requirements.txt
+torchmetrics==1.9.0
+torch-fidelity==0.4.0
+wandb==0.30.0
+scipy==1.15.3
+Pillow==12.3.0

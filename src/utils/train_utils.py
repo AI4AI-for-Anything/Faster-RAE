@@ -11,6 +11,8 @@ from torchvision.datasets import ImageFolder
 from pathlib import Path
 from copy import deepcopy
 from .dist_utils import setup_distributed
+from .compute_backends import enabled
+from .fusion_backends import record_call
 
 
 
@@ -71,6 +73,20 @@ def update_ema(ema_model, model, decay=0.9999):
     """
     ema_params = OrderedDict(ema_model.named_parameters())
     model_params = OrderedDict(model.named_parameters())
+
+    if enabled("RAE_EMA_FOREACH"):
+        groups = {}
+        for name, param in model_params.items():
+            target = ema_params[name]
+            key = (target.device, target.dtype)
+            targets, sources = groups.setdefault(key, ([], []))
+            targets.append(target)
+            sources.append(param.data)
+        for targets, sources in groups.values():
+            torch._foreach_mul_(targets, decay)
+            torch._foreach_add_(targets, sources, alpha=1 - decay)
+        record_call("ema_foreach")
+        return
 
     for name, param in model_params.items():
         # TODO: Consider applying only to params that require_grad to avoid small numerical changes of pos_embed

@@ -9,6 +9,10 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch.nn.utils.spectral_norm import SpectralNorm
 from .utils import RandomWindowCrop
+from utils.compute_backends import enabled, attention_backend
+from utils.local_attention import local_bf16_attention
+from utils.local_auxiliary import auxiliary_linear
+from utils.fusion_backends import compile_auxiliary
 
 dropout_add_layer_norm = fused_mlp_func = None
 flash_attn_qkvpacked_func = None
@@ -34,7 +38,7 @@ class MLPNoDrop(nn.Module):
         self.fc2 = nn.Linear(hidden_features, out_features)
     
     def forward(self, x):
-        if self.fused_mlp_func is not None:
+        if self.fused_mlp_func is not None and not enabled("RAE_DISC_MLP_BF16"):
             return self.fused_mlp_func(
                 x=x,
                 weight1=self.fc1.weight,
@@ -49,7 +53,7 @@ class MLPNoDrop(nn.Module):
                 process_group=None,
             )
         else:
-            return self.fc2(self.act(self.fc1(x)))
+            return auxiliary_linear(self.fc2, self.act(auxiliary_linear(self.fc1, x, "DISC_MLP")), "DISC_MLP")
     
     def extra_repr(self) -> str:
         return f'fused_mlp_func={self.fused_mlp_func is not None}'
@@ -68,13 +72,22 @@ class SelfAttentionNoDrop(nn.Module):
     
     def forward(self, x):
         B, L, C = x.shape
-        qkv = self.qkv(x).view(B, L, 3, self.num_heads, self.head_dim)
-        if self.using_flash_attn and qkv.dtype != torch.float32:
+        qkv = auxiliary_linear(self.qkv, x, "DISC_PROJ").view(B, L, 3, self.num_heads, self.head_dim)
+        if enabled("RAE_DISC_ATTN_BF16"):
+            q, k, v = qkv.permute(2, 0, 3, 1, 4).unbind(dim=0)
+            oup = local_bf16_attention(q, k, v, scale=self.scale)
+            oup = oup.transpose(1, 2).reshape(B, L, C)
+        elif enabled("RAE_DISC_SDPA"):
+            q, k, v = qkv.permute(2, 0, 3, 1, 4).unbind(dim=0)
+            with attention_backend():
+                oup = F.scaled_dot_product_attention(q, k, v, scale=self.scale)
+            oup = oup.transpose(1, 2).reshape(B, L, C)
+        elif self.using_flash_attn and qkv.dtype != torch.float32:
             oup = flash_attn_qkvpacked_func(qkv, softmax_scale=self.scale).view(B, L, C)
         else:
             q, k, v = qkv.permute(2, 0, 3, 1, 4).unbind(dim=0)  # BHLc
             oup = slow_attn(query=q, key=k, value=v, scale=self.scale).transpose(1, 2).reshape(B, L, C)
-        return self.proj(oup)
+        return auxiliary_linear(self.proj, oup, "DISC_PROJ")
     
     def extra_repr(self) -> str:
         return f'using_flash_attn={self.using_flash_attn}'
@@ -87,6 +100,7 @@ class SABlockNoDrop(nn.Module):
         self.norm2 = nn.LayerNorm(embed_dim, eps=norm_eps)
         self.mlp = MLPNoDrop(in_features=embed_dim, hidden_features=round(embed_dim * mlp_ratio), fused_if_available=True)
     
+    @compile_auxiliary("disc_blocks")
     def forward(self, x):
         x = x + self.attn(self.norm1(x))
         x = x + self.mlp(self.norm2(x))
@@ -127,6 +141,10 @@ class BatchNormLocal(nn.Module):
         
         # Reshape batch into groups.
         G = np.ceil(x.size(0) / self.virtual_bs).astype(int) # disbale ghostnorm , for there will be division problem when bs % virtual_bs != 0
+        return self._normalize_tensor(x, int(G), shape)
+
+    @compile_auxiliary("disc_norm")
+    def _normalize_tensor(self, x, G, shape):
         x = x.view(G, -1, x.size(-2), x.size(-1))
         # Calculate stats.
         mean = x.mean([1, 3], keepdim=True)

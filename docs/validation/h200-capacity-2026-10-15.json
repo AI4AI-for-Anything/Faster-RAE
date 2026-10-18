@@ -1,0 +1,440 @@
+{
+  "date": "2026-10-15",
+  "kind": "capacity_smoke_only",
+  "hardware": "NVIDIA L20X (H200-class, sm_90)",
+  "driver": "570.148.08",
+  "environment_preparation": "isolated venv with system-site-packages from existing read-only PyTorch environment; not a clean wheel installation",
+  "dataset": "existing local ImageNet training subset",
+  "steps_per_phase": 8,
+  "warmup_steps": 3,
+  "reserve_gib": 4,
+  "runs": {
+    "run80": {
+      "complete": true,
+      "budget_gib": 80.0,
+      "selected_batch": 64,
+      "source_sha256": "a527d16fd873b6a046a2ff1054bbce2fce2a5b116190be9935c18a4854953188",
+      "profile_enabled": false,
+      "versions": {
+        "torch": "2.8.0+cu128",
+        "torchvision": "0.23.0+cu128",
+        "triton": "3.4.0",
+        "transformers": "4.56.2",
+        "timm": "0.9.16",
+        "numpy": "1.26.0",
+        "omegaconf": "2.3.0",
+        "torchmetrics": "1.9.0",
+        "torch-fidelity": "0.4.0",
+        "wandb": "0.30.0",
+        "scipy": "1.15.3",
+        "Pillow": "12.3.0"
+      },
+      "hardware": {
+        "name": "NVIDIA L20X",
+        "capability": [
+          9,
+          0
+        ],
+        "total_gib": 139.81134033203125,
+        "cuda": "12.8",
+        "cudnn": 91002,
+        "bf16": true
+      },
+      "attempts": [
+        {
+          "batch": 64,
+          "phase": "recon",
+          "status": "PASS",
+          "wall_seconds": 160.86190740205348,
+          "device_peak_sampled_gib": 44.6083984375,
+          "device_memory_samples": 255,
+          "complete": true,
+          "peak_allocated_gib": 41.09052085876465,
+          "peak_reserved_gib": 43.3125,
+          "median_step_ms": 205.87247237563133,
+          "compiles_after_warmup": 0,
+          "finite_checks": {
+            "decoder": {
+              "gradient_tensors": 456,
+              "gradients_finite": true,
+              "parameters_finite": true
+            },
+            "discriminator": {
+              "gradient_tensors": 0,
+              "gradients_finite": false,
+              "parameters_finite": true
+            }
+          },
+          "allocator_limit_gib": 76.0,
+          "completed_steps": 8
+        },
+        {
+          "batch": 64,
+          "phase": "disc",
+          "status": "PASS",
+          "wall_seconds": 91.28290337976068,
+          "device_peak_sampled_gib": 44.3935546875,
+          "device_memory_samples": 145,
+          "complete": true,
+          "peak_allocated_gib": 39.896212577819824,
+          "peak_reserved_gib": 43.09765625,
+          "median_step_ms": 332.88978692144156,
+          "compiles_after_warmup": 0,
+          "finite_checks": {
+            "decoder": {
+              "gradient_tensors": 456,
+              "gradients_finite": true,
+              "parameters_finite": true
+            },
+            "discriminator": {
+              "gradient_tensors": 50,
+              "gradients_finite": true,
+              "parameters_finite": true
+            }
+          },
+          "allocator_limit_gib": 76.0,
+          "completed_steps": 8
+        },
+        {
+          "batch": 64,
+          "phase": "gan",
+          "status": "PASS",
+          "wall_seconds": 77.74831180181354,
+          "device_peak_sampled_gib": 53.8994140625,
+          "device_memory_samples": 115,
+          "complete": true,
+          "peak_allocated_gib": 48.456364154815674,
+          "peak_reserved_gib": 52.6015625,
+          "median_step_ms": 431.7404152825475,
+          "compiles_after_warmup": 0,
+          "finite_checks": {
+            "decoder": {
+              "gradient_tensors": 456,
+              "gradients_finite": true,
+              "parameters_finite": true
+            },
+            "discriminator": {
+              "gradient_tensors": 50,
+              "gradients_finite": true,
+              "parameters_finite": true
+            }
+          },
+          "allocator_limit_gib": 76.0,
+          "completed_steps": 8
+        }
+      ]
+    },
+    "run48": {
+      "complete": true,
+      "budget_gib": 48.0,
+      "selected_batch": 32,
+      "source_sha256": "993ca748d8c8353268f0c0fb64e531d614670f16bb5e747435e184a96a0cb036",
+      "profile_enabled": false,
+      "versions": {
+        "torch": "2.8.0+cu128",
+        "torchvision": "0.23.0+cu128",
+        "triton": "3.4.0",
+        "transformers": "4.56.2",
+        "timm": "0.9.16",
+        "numpy": "1.26.0",
+        "omegaconf": "2.3.0",
+        "torchmetrics": "1.9.0",
+        "torch-fidelity": "0.4.0",
+        "wandb": "0.30.0",
+        "scipy": "1.15.3",
+        "Pillow": "12.3.0"
+      },
+      "hardware": {
+        "name": "NVIDIA L20X",
+        "capability": [
+          9,
+          0
+        ],
+        "total_gib": 139.81134033203125,
+        "cuda": "12.8",
+        "cudnn": 91002,
+        "bf16": true
+      },
+      "attempts": [
+        {
+          "batch": 64,
+          "phase": "recon",
+          "status": "PASS",
+          "wall_seconds": 36.0019172905013,
+          "device_peak_sampled_gib": 44.5634765625,
+          "device_memory_samples": 57,
+          "complete": true,
+          "peak_allocated_gib": 41.09392833709717,
+          "peak_reserved_gib": 43.26953125,
+          "median_step_ms": 205.31568862497807,
+          "compiles_after_warmup": 0,
+          "finite_checks": {
+            "decoder": {
+              "gradient_tensors": 456,
+              "gradients_finite": true,
+              "parameters_finite": true
+            },
+            "discriminator": {
+              "gradient_tensors": 0,
+              "gradients_finite": false,
+              "parameters_finite": true
+            }
+          },
+          "allocator_limit_gib": 44.0,
+          "completed_steps": 8
+        },
+        {
+          "batch": 64,
+          "phase": "disc",
+          "status": "PASS",
+          "wall_seconds": 43.26713985018432,
+          "device_peak_sampled_gib": 44.3935546875,
+          "device_memory_samples": 68,
+          "complete": true,
+          "peak_allocated_gib": 39.896212577819824,
+          "peak_reserved_gib": 43.09765625,
+          "median_step_ms": 331.0431418940425,
+          "compiles_after_warmup": 0,
+          "finite_checks": {
+            "decoder": {
+              "gradient_tensors": 456,
+              "gradients_finite": true,
+              "parameters_finite": true
+            },
+            "discriminator": {
+              "gradient_tensors": 50,
+              "gradients_finite": true,
+              "parameters_finite": true
+            }
+          },
+          "allocator_limit_gib": 44.0,
+          "completed_steps": 8
+        },
+        {
+          "batch": 64,
+          "phase": "gan",
+          "status": "OOM",
+          "wall_seconds": 39.5411314740777,
+          "device_peak_sampled_gib": 45.0830078125,
+          "device_memory_samples": 62,
+          "complete": null,
+          "peak_allocated_gib": null,
+          "peak_reserved_gib": null,
+          "median_step_ms": null,
+          "compiles_after_warmup": null,
+          "finite_checks": null,
+          "allocator_limit_gib": null,
+          "completed_steps": 0
+        },
+        {
+          "batch": 32,
+          "phase": "recon",
+          "status": "PASS",
+          "wall_seconds": 119.05711573548615,
+          "device_peak_sampled_gib": 28.9599609375,
+          "device_memory_samples": 190,
+          "complete": true,
+          "peak_allocated_gib": 26.054015159606934,
+          "peak_reserved_gib": 27.6640625,
+          "median_step_ms": 113.8810170814395,
+          "compiles_after_warmup": 0,
+          "finite_checks": {
+            "decoder": {
+              "gradient_tensors": 456,
+              "gradients_finite": true,
+              "parameters_finite": true
+            },
+            "discriminator": {
+              "gradient_tensors": 0,
+              "gradients_finite": false,
+              "parameters_finite": true
+            }
+          },
+          "allocator_limit_gib": 44.0,
+          "completed_steps": 8
+        },
+        {
+          "batch": 32,
+          "phase": "disc",
+          "status": "PASS",
+          "wall_seconds": 77.87452607695013,
+          "device_peak_sampled_gib": 27.6494140625,
+          "device_memory_samples": 123,
+          "complete": true,
+          "peak_allocated_gib": 24.740713119506836,
+          "peak_reserved_gib": 26.353515625,
+          "median_step_ms": 188.08695767074823,
+          "compiles_after_warmup": 0,
+          "finite_checks": {
+            "decoder": {
+              "gradient_tensors": 456,
+              "gradients_finite": true,
+              "parameters_finite": true
+            },
+            "discriminator": {
+              "gradient_tensors": 50,
+              "gradients_finite": true,
+              "parameters_finite": true
+            }
+          },
+          "allocator_limit_gib": 44.0,
+          "completed_steps": 8
+        },
+        {
+          "batch": 32,
+          "phase": "gan",
+          "status": "PASS",
+          "wall_seconds": 74.10921044368297,
+          "device_peak_sampled_gib": 32.4853515625,
+          "device_memory_samples": 117,
+          "complete": true,
+          "peak_allocated_gib": 29.04939365386963,
+          "peak_reserved_gib": 31.185546875,
+          "median_step_ms": 241.0039994865656,
+          "compiles_after_warmup": 0,
+          "finite_checks": {
+            "decoder": {
+              "gradient_tensors": 456,
+              "gradients_finite": true,
+              "parameters_finite": true
+            },
+            "discriminator": {
+              "gradient_tensors": 50,
+              "gradients_finite": true,
+              "parameters_finite": true
+            }
+          },
+          "allocator_limit_gib": 44.0,
+          "completed_steps": 8
+        }
+      ]
+    },
+    "run80-profile": {
+      "complete": true,
+      "budget_gib": 80.0,
+      "selected_batch": 64,
+      "source_sha256": "993ca748d8c8353268f0c0fb64e531d614670f16bb5e747435e184a96a0cb036",
+      "profile_enabled": true,
+      "versions": {
+        "torch": "2.8.0+cu128",
+        "torchvision": "0.23.0+cu128",
+        "triton": "3.4.0",
+        "transformers": "4.56.2",
+        "timm": "0.9.16",
+        "numpy": "1.26.0",
+        "omegaconf": "2.3.0",
+        "torchmetrics": "1.9.0",
+        "torch-fidelity": "0.4.0",
+        "wandb": "0.30.0",
+        "scipy": "1.15.3",
+        "Pillow": "12.3.0"
+      },
+      "hardware": {
+        "name": "NVIDIA L20X",
+        "capability": [
+          9,
+          0
+        ],
+        "total_gib": 139.81134033203125,
+        "cuda": "12.8",
+        "cudnn": 91002,
+        "bf16": true
+      },
+      "attempts": [
+        {
+          "batch": 64,
+          "phase": "recon",
+          "status": "PASS",
+          "wall_seconds": 38.08183609042317,
+          "device_peak_sampled_gib": 43.2958984375,
+          "device_memory_samples": 60,
+          "complete": true,
+          "peak_allocated_gib": 39.54735612869263,
+          "peak_reserved_gib": 41.98828125,
+          "median_step_ms": 205.63487615436316,
+          "compiles_after_warmup": 0,
+          "finite_checks": {
+            "decoder": {
+              "gradient_tensors": 456,
+              "gradients_finite": true,
+              "parameters_finite": true
+            },
+            "discriminator": {
+              "gradient_tensors": 0,
+              "gradients_finite": false,
+              "parameters_finite": true
+            }
+          },
+          "allocator_limit_gib": 76.0,
+          "completed_steps": 8,
+          "trace_bytes": 14402398,
+          "operator_table_bytes": 11489,
+          "trace_events": 45240,
+          "cuda_kernel_events": 4507
+        },
+        {
+          "batch": 64,
+          "phase": "disc",
+          "status": "PASS",
+          "wall_seconds": 45.509069975465536,
+          "device_peak_sampled_gib": 44.4072265625,
+          "device_memory_samples": 72,
+          "complete": true,
+          "peak_allocated_gib": 39.896212577819824,
+          "peak_reserved_gib": 43.09765625,
+          "median_step_ms": 336.0067280009389,
+          "compiles_after_warmup": 0,
+          "finite_checks": {
+            "decoder": {
+              "gradient_tensors": 456,
+              "gradients_finite": true,
+              "parameters_finite": true
+            },
+            "discriminator": {
+              "gradient_tensors": 50,
+              "gradients_finite": true,
+              "parameters_finite": true
+            }
+          },
+          "allocator_limit_gib": 76.0,
+          "completed_steps": 8,
+          "trace_bytes": 23786784,
+          "operator_table_bytes": 11489,
+          "trace_events": 72982,
+          "cuda_kernel_events": 7245
+        },
+        {
+          "batch": 64,
+          "phase": "gan",
+          "status": "PASS",
+          "wall_seconds": 53.91558865364641,
+          "device_peak_sampled_gib": 53.9130859375,
+          "device_memory_samples": 78,
+          "complete": true,
+          "peak_allocated_gib": 48.456364154815674,
+          "peak_reserved_gib": 52.6015625,
+          "median_step_ms": 432.50405695289373,
+          "compiles_after_warmup": 0,
+          "finite_checks": {
+            "decoder": {
+              "gradient_tensors": 456,
+              "gradients_finite": true,
+              "parameters_finite": true
+            },
+            "discriminator": {
+              "gradient_tensors": 50,
+              "gradients_finite": true,
+              "parameters_finite": true
+            }
+          },
+          "allocator_limit_gib": 76.0,
+          "completed_steps": 8,
+          "trace_bytes": 29630257,
+          "operator_table_bytes": 11489,
+          "trace_events": 90319,
+          "cuda_kernel_events": 8828
+        }
+      ]
+    }
+  }
+}

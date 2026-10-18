@@ -1,11 +1,13 @@
 from __future__ import annotations
 
 import math
+import os
 from typing import Any, Dict, Iterable, Optional
 
 import torch
 from torch.optim import Optimizer
 from torch.optim.lr_scheduler import LambdaLR
+from .fusion_backends import record_call
 
 
 def _as_tuple(values: Any, length: int = 2) -> tuple:
@@ -30,15 +32,31 @@ def build_optimizer(parameters: Iterable[torch.nn.Parameter], training_cfg: Dict
     weight_decay = float(opt_cfg.get("weight_decay", opt_cfg.get("wd", 0.0)))
     eps = float(opt_cfg.get("eps", 1e-8))
 
+    implementation = os.environ.get("RAE_ADAMW_IMPL", "fused")
+    if implementation not in ("fused", "foreach"):
+        raise ValueError(f"Unsupported RAE_ADAMW_IMPL: {implementation}")
     optimizer = torch.optim.AdamW(
         parameters,
         lr=base_lr,
         betas=betas,
         weight_decay=weight_decay,
         eps=eps,
-        fused=True,
-        #foreach=True,
+        fused=implementation == "fused",
+        foreach=True if implementation == "foreach" else None,
     )
+    if implementation == "foreach":
+        # Checkpoints serialize implementation flags in param_groups. Keep the
+        # explicit runtime choice when resuming a checkpoint from fused AdamW.
+        def restore_foreach_choice(loaded_optimizer):
+            for group in loaded_optimizer.param_groups:
+                group["foreach"] = True
+                group["fused"] = False
+
+        optimizer.register_load_state_dict_post_hook(restore_foreach_choice)
+    if os.environ.get("RAE_FUSION_DIAGNOSTICS", "0") == "1":
+        optimizer.register_step_post_hook(
+            lambda *_args, **_kwargs: record_call(f"adamw_{implementation}_step")
+        )
 
     training_cfg.setdefault("base_lr", base_lr)
     training_cfg.setdefault("final_lr", float(training_cfg.get("final_lr", base_lr)))

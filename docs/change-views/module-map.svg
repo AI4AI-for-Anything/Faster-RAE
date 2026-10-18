@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="850" viewBox="0 0 1200 850" role="img" aria-labelledby="title desc">
+<title id="title">Faster-RAE: where the code changed</title>
+<desc id="desc">Initial optimized compute paths and later fixed-global-batch GPU adaptation, shown separately. Full file inventory is in review-table.md. This map does not attribute speedup to individual files.</desc>
+<style>text{font-family:Arial,Helvetica,sans-serif;fill:#14283f}.title{font-size:32px;font-weight:700}.label{font-size:18px;font-weight:700}.body{font-size:16px}.code{font-size:15px;font-family:monospace}.small{font-size:15px;fill:#52647b}</style>
+<rect width="1200" height="850" rx="20" fill="#f3f6fb"/>
+<text x="40" y="54" class="title">What changed in Faster-RAE</text>
+<text x="40" y="85" class="body">A source map, not a per-file speedup attribution</text>
+<text x="40" y="134" class="label">01 / Initial optimization</text>
+<text x="355" y="134" class="small">a4d18c4 → 649d0e7 · 16 paths</text>
+<a href="../../src/stage1/decoders/decoder.py"><rect x="40" y="153" width="360" height="186" rx="12" fill="white" stroke="#d6e0ed"/>
+<rect x="40" y="153" width="360" height="5" rx="2" fill="#3269dd"/>
+<text x="60" y="187" class="label">Decoder</text>
+<text x="60" y="218" class="code">stage1/decoders/decoder.py</text>
+<text x="60" y="243" class="code">utils/local_attention.py</text>
+<text x="60" y="268" class="code">utils/local_linear.py</text>
+<text x="60" y="293" class="code">Local BF16 + compiled blocks</text>
+</a>
+<a href="../../src/disc/dinodisc.py"><rect x="420" y="153" width="360" height="186" rx="12" fill="white" stroke="#d6e0ed"/>
+<rect x="420" y="153" width="360" height="5" rx="2" fill="#3269dd"/>
+<text x="440" y="187" class="label">LPIPS + discriminator</text>
+<text x="440" y="218" class="code">disc/lpips.py</text>
+<text x="440" y="243" class="code">disc/dinodisc.py</text>
+<text x="440" y="268" class="code">Layout + compiled regions</text>
+<text x="440" y="293" class="code">Local BF16 attention / MLP</text>
+</a>
+<a href="../../.harness/config.json"><rect x="800" y="153" width="360" height="186" rx="12" fill="white" stroke="#d6e0ed"/>
+<rect x="800" y="153" width="360" height="5" rx="2" fill="#3269dd"/>
+<text x="820" y="187" class="label">Shared controls + preset</text>
+<text x="820" y="218" class="code">utils/{compute,fusion}_backends.py</text>
+<text x="820" y="243" class="code">utils/local_auxiliary.py</text>
+<text x="820" y="268" class="code">.harness/config.json</text>
+<text x="820" y="293" class="code">scripts/fd7800d0633a.env.sh</text>
+</a>
+<text x="40" y="369" class="small">Also: encoder hooks, RAE setup, optimizer / EMA options, snapshot manifest and README.</text>
+<text x="40" y="394" class="small">Optional hooks are not all active in the selected preset; see the complete inventory.</text>
+<text x="40" y="449" class="label">02 / Later adaptation + validation</text>
+<text x="440" y="449" class="small">649d0e7 → 86aee71 · 27 paths</text>
+<a href="../../src/utils/accumulation.py"><rect x="40" y="468" width="360" height="186" rx="12" fill="white" stroke="#d6e0ed"/>
+<rect x="40" y="468" width="360" height="5" rx="2" fill="#13846d"/>
+<text x="60" y="502" class="label">Fixed-batch training</text>
+<text x="60" y="533" class="code">train_stage1.py</text>
+<text x="60" y="558" class="code">utils/accumulation.py</text>
+<text x="60" y="583" class="code">utils/batch_plan.py</text>
+<text x="60" y="608" class="code">Global = GPUs × micro × accum</text>
+</a>
+<a href="../../tools/adapt_gpu.py"><rect x="420" y="468" width="360" height="186" rx="12" fill="white" stroke="#d6e0ed"/>
+<rect x="420" y="468" width="360" height="5" rx="2" fill="#13846d"/>
+<text x="440" y="502" class="label">Capacity probing</text>
+<text x="440" y="533" class="code">tools/adapt_gpu.py</text>
+<text x="440" y="558" class="code">utils/capacity_probe.py</text>
+<text x="440" y="583" class="code">tests/test_{accumulation,</text>
+<text x="440" y="608" class="code">  gpu_adaptation}.py</text>
+</a>
+<a href="../../docs/agent-environment.md"><rect x="800" y="468" width="360" height="186" rx="12" fill="white" stroke="#d6e0ed"/>
+<rect x="800" y="468" width="360" height="5" rx="2" fill="#13846d"/>
+<text x="820" y="502" class="label">Environment + agent entry</text>
+<text x="820" y="533" class="code">tools/check_environment.py</text>
+<text x="820" y="558" class="code">disc/lpips_utils.py</text>
+<text x="820" y="583" class="code">AGENTS.md + adaptation skill</text>
+<text x="820" y="608" class="code">Setup docs + requirements</text>
+</a>
+<text x="40" y="684" class="small">Plus: versioned H20 / H200 timing, capacity and reconstruction-quality evidence.</text>
+<rect x="40" y="715" width="1120" height="97" rx="12" fill="#e6edf8"/>
+<text x="60" y="746" class="label">Read the evidence at the right scope</text>
+<text x="60" y="773" class="body">Benchmark speedups apply to configurations. A capacity PASS is not a convergence verdict.</text>
+<a href="review-table.md"><text x="60" y="799" class="small">Full paths, exact commits and purposes → review-table.md</text></a>
+</svg>

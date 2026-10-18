@@ -3,6 +3,8 @@ from torch import nn
 import torch
 from math import *
 from . import register_encoder
+from utils.compute_backends import attention_backend
+from utils.local_auxiliary import EncoderLinear
 
 
 @register_encoder()
@@ -18,6 +20,11 @@ class Dinov2withNorm(nn.Module):
             self.encoder = Dinov2WithRegistersModel.from_pretrained(dinov2_path, local_files_only=True)
         except (OSError, ValueError, AttributeError):
             self.encoder = Dinov2WithRegistersModel.from_pretrained(dinov2_path, local_files_only=False)
+        # Adapt only transformer block Linears in this encoder instance.
+        for layer in self.encoder.encoder.layer:
+            for module in layer.modules():
+                if type(module) is nn.Linear:
+                    module.__class__ = EncoderLinear
         self.encoder.requires_grad_(False)
         if normalize:
             self.encoder.layernorm.elementwise_affine = False
@@ -27,7 +34,8 @@ class Dinov2withNorm(nn.Module):
         self.hidden_size = self.encoder.config.hidden_size
         
     def dinov2_forward(self, x: torch.Tensor) -> torch.Tensor:
-        x = self.encoder(x, output_hidden_states=True)
+        with attention_backend():
+            x = self.encoder(x, output_hidden_states=True)
         unused_token_num = 5  # 1 CLS + 4 register tokens
         image_features = x.last_hidden_state[:, unused_token_num:]
         return image_features

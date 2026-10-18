@@ -22,6 +22,10 @@ from typing import Optional, Set, Tuple, Union
 
 import numpy as np
 import torch
+from utils.compute_backends import enabled, attention_backend
+from utils.local_attention import local_bf16_attention
+from utils.local_linear import decoder_linear
+from utils.fusion_backends import compile_decoder_block
 from torch import nn
 # correct the above import to the following
 from .utils import ViTMAEConfig, ACT2FN, ModelOutput
@@ -358,10 +362,19 @@ class ViTMAESelfAttention(nn.Module):
     def forward(
         self, hidden_states, head_mask: Optional[torch.Tensor] = None, output_attentions: bool = False
     ) -> Union[Tuple[torch.Tensor, torch.Tensor], Tuple[torch.Tensor]]:
-        mixed_query_layer = self.query(hidden_states)
+        if enabled("RAE_DECODER_ATTN_BF16") and head_mask is None and not output_attentions:
+            q = self.transpose_for_scores(decoder_linear(self.query, hidden_states, "proj"))
+            k = self.transpose_for_scores(decoder_linear(self.key, hidden_states, "proj"))
+            v = self.transpose_for_scores(decoder_linear(self.value, hidden_states, "proj"))
+            context = local_bf16_attention(q, k, v, dropout_p=self.dropout.p if self.training else 0.0)
+            context = context.permute(0, 2, 1, 3).contiguous()
+            return (context.view(context.size()[:-2] + (self.all_head_size,)),)
+        if enabled("RAE_DECODER_SDPA") and head_mask is None and not output_attentions:
+            return ViTMAESdpaSelfAttention.forward(self, hidden_states)
+        mixed_query_layer = decoder_linear(self.query, hidden_states, "proj")
 
-        key_layer = self.transpose_for_scores(self.key(hidden_states))
-        value_layer = self.transpose_for_scores(self.value(hidden_states))
+        key_layer = self.transpose_for_scores(decoder_linear(self.key, hidden_states, "proj"))
+        value_layer = self.transpose_for_scores(decoder_linear(self.value, hidden_states, "proj"))
         query_layer = self.transpose_for_scores(mixed_query_layer)
 
         # Take the dot product between "query" and "key" to get the raw attention scores.
@@ -400,21 +413,22 @@ class ViTMAESdpaSelfAttention(ViTMAESelfAttention):
     def forward(
         self, hidden_states, head_mask: Optional[torch.Tensor] = None, output_attentions: bool = False
     ) -> Union[Tuple[torch.Tensor, torch.Tensor], Tuple[torch.Tensor]]:
-        mixed_query_layer = self.query(hidden_states)
+        mixed_query_layer = decoder_linear(self.query, hidden_states, "proj")
 
-        key_layer = self.transpose_for_scores(self.key(hidden_states))
-        value_layer = self.transpose_for_scores(self.value(hidden_states))
+        key_layer = self.transpose_for_scores(decoder_linear(self.key, hidden_states, "proj"))
+        value_layer = self.transpose_for_scores(decoder_linear(self.value, hidden_states, "proj"))
         query_layer = self.transpose_for_scores(mixed_query_layer)
 
-        context_layer = torch.nn.functional.scaled_dot_product_attention(
-            query_layer,
-            key_layer,
-            value_layer,
-            head_mask,
-            self.attention_probs_dropout_prob if self.training else 0.0,
-            is_causal=False,
-            scale=None,
-        )
+        with attention_backend():
+            context_layer = torch.nn.functional.scaled_dot_product_attention(
+                query_layer,
+                key_layer,
+                value_layer,
+                head_mask,
+                self.dropout.p if self.training else 0.0,
+                is_causal=False,
+                scale=None,
+            )
 
         context_layer = context_layer.permute(0, 2, 1, 3).contiguous()
         new_context_layer_shape = context_layer.size()[:-2] + (self.all_head_size,)
@@ -436,7 +450,7 @@ class ViTMAESelfOutput(nn.Module):
         self.dropout = nn.Dropout(config.hidden_dropout_prob)
 
     def forward(self, hidden_states: torch.Tensor, input_tensor: torch.Tensor) -> torch.Tensor:
-        hidden_states = self.dense(hidden_states)
+        hidden_states = decoder_linear(self.dense, hidden_states, "proj")
         hidden_states = self.dropout(hidden_states)
 
         return hidden_states
@@ -473,7 +487,7 @@ class ViTMAEIntermediate(nn.Module):
             self.intermediate_act_fn = config.hidden_act
 
     def forward(self, hidden_states: torch.Tensor) -> torch.Tensor:
-        hidden_states = self.dense(hidden_states)
+        hidden_states = decoder_linear(self.dense, hidden_states, "mlp")
         hidden_states = self.intermediate_act_fn(hidden_states)
 
         return hidden_states
@@ -487,7 +501,7 @@ class ViTMAEOutput(nn.Module):
         self.dropout = nn.Dropout(config.hidden_dropout_prob)
 
     def forward(self, hidden_states: torch.Tensor, input_tensor: torch.Tensor) -> torch.Tensor:
-        hidden_states = self.dense(hidden_states)
+        hidden_states = decoder_linear(self.dense, hidden_states, "mlp")
         hidden_states = self.dropout(hidden_states)
 
         hidden_states = hidden_states + input_tensor
@@ -510,6 +524,7 @@ class ViTMAELayer(nn.Module):
         self.layernorm_before = nn.LayerNorm(config.hidden_size, eps=config.layer_norm_eps)
         self.layernorm_after = nn.LayerNorm(config.hidden_size, eps=config.layer_norm_eps)
 
+    @compile_decoder_block
     def forward(
         self,
         hidden_states: torch.Tensor,
@@ -745,5 +760,3 @@ class GeneralDecoder(nn.Module):
             hidden_states=all_hidden_states,
             attentions=all_self_attentions,
         )
-
-

@@ -4,12 +4,16 @@ Stripped LPIPS implementation adapted from the original repository used in VQGAN
 from __future__ import annotations
 
 from collections import namedtuple
+import os
 
 import torch
 import torch.nn as nn
 from torchvision import models
 
 from .lpips_utils import get_ckpt_path
+from utils.fusion_backends import compile_auxiliary
+from utils.compute_backends import configure_cudnn_benchmark
+from utils.local_auxiliary import VGGConv2d
 
 
 class ScalingLayer(nn.Module):
@@ -33,7 +37,13 @@ class NetLinLayer(nn.Module):
 class VGG16FeatureExtractor(nn.Module):
     def __init__(self, requires_grad: bool = False, pretrained: bool = True) -> None:
         super().__init__()
+        self.layout = os.environ.get("RAE_LPIPS_LAYOUT", "off")
+        if self.layout not in ("off", "vgg", "full"):
+            raise ValueError(f"Unsupported RAE_LPIPS_LAYOUT: {self.layout}")
         features = models.vgg16(pretrained=pretrained).features
+        for module in features.modules():
+            if type(module) is nn.Conv2d:
+                module.__class__ = VGGConv2d
         self.slice1 = nn.Sequential(*[features[x] for x in range(4)])
         self.slice2 = nn.Sequential(*[features[x] for x in range(4, 9)])
         self.slice3 = nn.Sequential(*[features[x] for x in range(9, 16)])
@@ -44,6 +54,8 @@ class VGG16FeatureExtractor(nn.Module):
                 param.requires_grad = False
 
     def forward(self, tensor: torch.Tensor):
+        if self.layout != "off":
+            tensor = tensor.contiguous(memory_format=torch.channels_last)
         h = self.slice1(tensor)
         h_relu1_2 = h
         h = self.slice2(h)
@@ -55,7 +67,11 @@ class VGG16FeatureExtractor(nn.Module):
         h = self.slice5(h)
         h_relu5_3 = h
         outputs = namedtuple("VggOutputs", ["relu1_2", "relu2_2", "relu3_3", "relu4_3", "relu5_3"])
-        return outputs(h_relu1_2, h_relu2_2, h_relu3_3, h_relu4_3, h_relu5_3)
+        features = (h_relu1_2, h_relu2_2, h_relu3_3, h_relu4_3, h_relu5_3)
+        # vgg isolates the comparison chain; full keeps its NHWC strides.
+        if self.layout == "vgg":
+            features = tuple(feature.contiguous() for feature in features)
+        return outputs(*features)
 
 
 def _normalize(tensor: torch.Tensor, eps: float = 1e-10) -> torch.Tensor:
@@ -65,6 +81,14 @@ def _normalize(tensor: torch.Tensor, eps: float = 1e-10) -> torch.Tensor:
 
 def _spatial_average(tensor: torch.Tensor, keepdim: bool = True) -> torch.Tensor:
     return tensor.mean([2, 3], keepdim=keepdim)
+
+
+@compile_auxiliary("lpips_compare")
+def _compare_level(feat_in, feat_tgt, projection):
+    feat_in = _normalize(feat_in)
+    feat_tgt = _normalize(feat_tgt)
+    diff = (feat_in - feat_tgt) ** 2
+    return _spatial_average(projection(diff), keepdim=True)
 
 
 class LPIPS(nn.Module):
@@ -81,6 +105,13 @@ class LPIPS(nn.Module):
         self.lin3 = NetLinLayer(self.chns[3], use_dropout=use_dropout)
         self.lin4 = NetLinLayer(self.chns[4], use_dropout=use_dropout)
         self._load_pretrained_weights()
+        # Convert loaded in-memory copies only; state keys and values are unchanged.
+        if self.net.layout != "off":
+            self.net.to(memory_format=torch.channels_last)
+        if self.net.layout == "full":
+            for layer in (self.lin0, self.lin1, self.lin2, self.lin3, self.lin4):
+                layer.to(memory_format=torch.channels_last)
+        configure_cudnn_benchmark()
         for param in self.parameters():
             param.requires_grad = False
 
@@ -97,10 +128,7 @@ class LPIPS(nn.Module):
         diffs = []
         lin_layers = [self.lin0, self.lin1, self.lin2, self.lin3, self.lin4]
         for idx, (feat_in, feat_tgt) in enumerate(zip(feats_input, feats_target)):
-            feat_in = _normalize(feat_in)
-            feat_tgt = _normalize(feat_tgt)
-            diff = (feat_in - feat_tgt) ** 2
-            diffs.append(_spatial_average(lin_layers[idx].model(diff), keepdim=True))
+            diffs.append(_compare_level(feat_in, feat_tgt, lin_layers[idx].model))
 
         value = diffs[0]
         for diff in diffs[1:]:
@@ -113,4 +141,3 @@ class LPIPS(nn.Module):
         if reduction == "mean":
             return torch.mean(value)
         raise ValueError(f"Unsupported reduction '{reduction}'")
-

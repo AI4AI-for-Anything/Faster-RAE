@@ -1,3 +1,74 @@
+# Faster-RAE
+
+**3.22× faster Stage-1 training on 8 NVIDIA H20 GPUs**, preserving the upstream global batch of **512**.
+
+| Implementation | PSNR (dB) ↑ | rFID ↓ | Iter-time (ms) ↓ | Speedup ↑ |
+|---|---:|---:|---:|---:|
+| RAE reference | 18.86 | 0.569 | 3,375.80 | 1.00× |
+| **Faster-RAE** | **19.00** | **0.541** | **1,049.22** | **3.22×** |
+
+**Timing:** fresh measurements on **8 H20s**, 256×256 images, **8 × 64 × 1 = 512** (64 images per GPU, no accumulation). Both timing rows use the current trainer at `6f0df05`, with optimization switches off/on. Iter-time weights reconstruction / discriminator / GAN phases by 6:2:8 and excludes compilation and warmup. Optimized sampled peak memory is **52.96 GiB/GPU**; this timing run uses the cards' full capacity, without an 80 GiB cap. [Timing protocol and results](docs/validation/h20-readme-benchmark-2026-10-15.md).
+
+**Quality:** the reference is the upstream public FP32 decoder; Faster-RAE is the original `fd7800d0633a` snapshot's **16-epoch final EMA checkpoint**. Both were evaluated on **ImageNet validation 50k** with the same upstream pipeline; rFID uses ADM. All 73 source-manifest files match the completed H20 run. These quality numbers **predate the later gradient-accumulation / discriminator-DDP changes**; completed-training quality of the current trainer remains unvalidated. [Checkpoint provenance and evaluation](docs/validation/h20-full-training-quality-2026-10-10.md).
+
+RAE Stage-1 training optimizations, based on [bytetriper/RAE](https://github.com/bytetriper/RAE) at `a4d18c4db766419cbe7cb8c02cd9f7ceb0ec9041`. The optimized source is candidate `fd7800d0633a`, the best validated snapshot retained by the H200 optimization run.
+
+## What changed, and where did the speedup come from?
+
+The change atlas separates the **original performance snapshot** from **later memory / gradient-accumulation adaptation**. It identifies the actual files against the upstream revision, with links and change counts; it does not assign a speedup to an individual file without an ablation.
+
+![RAE file-change map](docs/change-views/module-map.svg)
+
+| View | Best for |
+|---|---|
+| [File-by-file review table](docs/change-views/review-table.md) | Exact changed files, purpose, and diff size |
+| [Module map](docs/change-views/module-map.svg) | Seeing how changes fit into the training pipeline |
+| [Interactive file cards](docs/change-views/index.html) | Filtering the changes by phase and module; open the HTML locally |
+
+![Historical RAE optimization progress](docs/performance-views/01-paper.svg)
+
+The [performance gallery](docs/performance-views/README.md) presents the same recorded optimization history in three visual styles. Historical two-GPU measurements are kept separate from the current **8×H20, global-batch-512, 3.22×** result. Adjacent historical points are not isolated one-switch ablations; the gallery distinguishes reported same-run parent gains, remeasurement, and a rejected candidate.
+
+## Adapt to your GPU first
+
+For an 80 GiB per-GPU budget, start with [environment preparation](docs/agent-environment.md) and [the GPU adaptation workflow](docs/gpu-adaptation.md). An agent should read [AGENTS.md](AGENTS.md) and the repository-local [adaptation skill](skills/adapt-rae-gpu/SKILL.md). The independent research harness remains a separate release; see [the boundary](docs/release-boundary.md).
+
+The adaptation tool checks the real environment, runs all three Stage-1 phases under an allocator budget plus device-memory monitoring, and chooses a microbatch plus gradient accumulation while preserving upstream global batch 512. The target defaults to 8 GPUs; `--world-size` selects another count. A single-GPU probe simulates one target rank. It produces capacity evidence, not a new numerical-equivalence or speedup verdict.
+
+The fixed-batch H200 probes passed with **8 × 64 × 1 = 512 at 80 GiB** (53.73 GiB sampled per-device peak) and **8 × 32 × 2 = 512 at 48 GiB** (31.58 GiB peak after a microbatch-64 GAN OOM). These equations describe the target eight-GPU deployment; each probe executed **one rank's local batch 64**, including accumulation. See [the accumulation validation report](docs/validation/h200-accumulation-2026-10-15.md) for evidence and limitations. These are memory-limited H200 tests, not physical 80/48 GiB GPU or eight-GPU capacity measurements.
+
+## Optimized training
+
+Use the [tested environment guide](docs/agent-environment.md), prepare the upstream data and models described below, then enable the exact validated switches before starting training:
+
+```bash
+source scripts/fd7800d0633a.env.sh
+export EXPERIMENT_NAME=faster-rae-training
+torchrun --standalone --nproc_per_node=8 src/train_stage1.py \
+  --config configs/stage1/training/DINOv2-B_decXL.yaml \
+  --data-path /path/to/imagenet/train \
+  --results-dir results/faster-rae \
+  --precision fp32
+```
+
+The original configuration uses global batch 512 (64 per GPU on eight GPUs). The H20 timing above uses this eight-GPU batch plan; the original H200 optimization benchmark used two GPUs with 64 images per GPU. Local BF16 attention/linear operations and TF32 are enabled by the preset while the training precision argument remains `fp32`. The preset also enables regional compilation, cuDNN attention, and LPIPS/discriminator optimizations. The exact environment is preserved in [`.harness/config.json`](.harness/config.json).
+
+## Historical validation
+
+A separate [fresh H200-class benchmark](docs/validation/h200-readme-benchmark-2026-10-15.md) measured **5.41×** at global batch 512 on two GPUs with accumulation 4. It uses a different hardware and accumulation setup from the eight-H20 result above.
+
+The recorded benchmark measured **345.13 ms/step**, **5.3167x** the same-run reference, and **48.52 GiB** peak memory for DINOv2-B + ViT-XL Stage-1 on two H200-class GPUs. These are historical measurements, not a fresh benchmark of this repository upload.
+
+The fixed evaluator recorded **PASS / N2 / statistical equivalent** across three seeds with 300 steps per seed. The result is not bitwise equivalence: 3,434 numerical diagnostic violations and 11 unresolved diagnostics remain in the original evaluation record. Short trajectories used a compressed phase schedule and do not establish full 16-epoch quality or eight-GPU equivalence. Stage-2 performance is outside this snapshot's validation scope.
+
+Source snapshot SHA-256: `b380522d42af751aa015b5ffc27cbb614c8b61e69bf6f3ce1dcacd814a47ba36`. [The original source manifest](docs/source-snapshot.json) records the 73 source files and their hashes; the initial import added this README introduction, the shell preset, and the manifest. Subsequent capacity-adaptation changes are tracked by Git and described in the adaptation documentation; the historical manifest identifies the original optimized snapshot, not every file in the current checkout. Model weights, training data, and machine-local experiment outputs are not distributed here.
+
+## Upstream documentation
+
+The original README follows, with upstream authorship and MIT license retained.
+
+---
+
 ## Diffusion Transformers with Representation Autoencoders (RAE)<br><sub>Official PyTorch Implementation</sub>
 
 ### [Paper](https://arxiv.org/abs/2510.11690) | [Project Page](https://rae-dit.github.io/) 

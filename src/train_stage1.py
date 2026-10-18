@@ -43,6 +43,8 @@ from stage1 import RAE
 
 ##### general utils
 from utils import wandb_utils
+from utils.batch_plan import training_batch_plan
+from utils.accumulation import generator_backward, sync_context
 from utils.model_utils import instantiate_from_config
 from utils.train_utils import *
 from utils.optim_utils import *
@@ -62,21 +64,14 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--global-seed", type=int, default=None, help="Override training.global_seed from the config.")    
     parser.add_argument('--wandb', action='store_true', help='Use Weights & Biases for logging if set.')
     parser.add_argument("--compile", action="store_true", help="Use torch compile (for rae.encode, rae.forward).")
+    parser.add_argument("--probe-steps", type=int, default=0, help="Bounded capacity probe; 0 runs normal training.")
+    parser.add_argument("--probe-warmup", type=int, default=3)
+    parser.add_argument("--probe-output", type=Path)
+    parser.add_argument("--memory-budget-gib", type=float, default=80)
+    parser.add_argument("--memory-reserve-gib", type=float, default=4)
+    parser.add_argument("--probe-profile", action="store_true", help="Record one post-warmup step with torch.profiler.")
+    parser.add_argument("--probe-target-world-size", type=int, help="Probe one rank of this target deployment; probe only.")
     return parser.parse_args()
-
-
-def calculate_adaptive_weight(
-    recon_loss: torch.Tensor,
-    gan_loss: torch.Tensor,
-    layer: torch.nn.Parameter,
-    max_d_weight: float = 1e4,
-) -> torch.Tensor:
-    recon_grads = torch.autograd.grad(recon_loss, layer, retain_graph=True)[0]
-    gan_grads = torch.autograd.grad(gan_loss, layer, retain_graph=True)[0]
-    d_weight = torch.norm(recon_grads) / (torch.norm(gan_grads) + 1e-6)
-    d_weight = torch.clamp(d_weight, 0.0, max_d_weight)
-    return d_weight.detach()
-
 
 
 
@@ -148,6 +143,10 @@ def main():
     args = parse_args()
     #### Dist Init
     rank, world_size, device = setup_distributed()
+    probe = None
+    if args.probe_steps:
+        from utils.capacity_probe import CapacityProbe
+        probe = CapacityProbe(args, device, world_size)
     
     #### Config init
     full_cfg = OmegaConf.load(args.config)
@@ -174,14 +173,15 @@ def main():
     max_d_weight = float(loss_cfg.get("max_d_weight", 1e4))
     disc_loss_type = loss_cfg.get("disc_loss", "hinge")
     gen_loss_type = loss_cfg.get("gen_loss", "vanilla")
-    batch_size = int(training_cfg.get("batch_size", 16))
-    global_batch_size = training_cfg.get("global_batch_size", None) # optional global batch size for override
-    if global_batch_size is not None:
-        global_batch_size = int(global_batch_size)
-        assert global_batch_size % world_size == 0, "global_batch_size must be divisible by world_size"
-        batch_size = global_batch_size // world_size
-    else:
-        global_batch_size = batch_size * world_size
+    if args.probe_target_world_size is not None and probe is None:
+        raise ValueError("--probe-target-world-size is only allowed with --probe-steps")
+    plan = training_batch_plan(training_cfg, world_size, args.probe_target_world_size)
+    batch_size = plan.micro_batch_size
+    accumulation_steps = plan.gradient_accumulation_steps
+    global_batch_size = plan.global_batch_size
+    if probe is not None:
+        probe.batch_plan = plan.to_dict() | {'executed_world_size': world_size,
+                                           'executed_batch_size': plan.local_batch_size}
     num_workers = int(training_cfg.get("num_workers", 4))
     clip_grad_val = training_cfg.get("clip_grad", 1.0)
     clip_grad = float(clip_grad_val) if clip_grad_val is not None else None
@@ -207,6 +207,8 @@ def main():
         assert len(eval_metrics) > 0, "eval.metrics must contain at least one metric to compute."
     else:
         do_eval = False
+    if probe is not None and (checkpoint_interval != 0 or sample_every != 0 or do_eval):
+        raise ValueError("Capacity probes require checkpoints/samples/eval disabled; use tools/adapt_gpu.py")
     global_seed = args.global_seed if args.global_seed is not None else default_seed
     seed = global_seed * world_size + rank
     torch.manual_seed(seed)
@@ -250,6 +252,9 @@ def main():
     disc_params = [p for p in discriminator.parameters() if p.requires_grad]
     disc_optimizer, disc_optim_msg = build_optimizer(disc_params, disc_cfg)
     
+    if probe is not None:
+        probe.bind_optimizers(optimizer, disc_optimizer)
+
     #### AMP init
     scaler, autocast_kwargs = get_autocast_scaler(args)
     
@@ -264,7 +269,7 @@ def main():
         ]
     )    
     loader, sampler = prepare_dataloader(
-        args.data_path, batch_size, num_workers, rank, world_size, transform=stage1_transform
+        args.data_path, plan.local_batch_size, num_workers, rank, world_size, transform=stage1_transform
     )
     if do_eval:
         eval_dataset = ImageFolder(
@@ -338,7 +343,8 @@ def main():
         print(sched_msg if sched_msg else "No LR scheduler for generator.")
         logger.info(disc_optim_msg)
         print(disc_sched_msg if disc_sched_msg else "No LR scheduler for discriminator.")
-        logger.info(f"Training for {num_epochs} epochs, batch size {batch_size} per GPU.")
+        logger.info(f"Training for {num_epochs} epochs, global batch {global_batch_size}, "
+                    f"micro batch {batch_size}, accumulation {accumulation_steps}, target ranks {plan.world_size}.")
         logger.info(f"Dataset contains {len(loader.dataset)} samples, {steps_per_epoch} steps per epoch.")
         logger.info(f"Running with world size {world_size}, starting from epoch {start_epoch} to {num_epochs}.")
 
@@ -369,47 +375,51 @@ def main():
                 disc_scheduler,
             )
         for step, (images, _) in enumerate(loader):
+            if probe is not None:
+                probe.begin_step()
             use_gan = global_step >= gan_start_step and disc_weight > 0.0
             train_disc = global_step >= disc_update_step and disc_weight > 0.0
             use_lpips = global_step >= lpips_start_step and perceptual_weight > 0.0
-            images = images.to(device, non_blocking=True)
-            real_normed = images * 2.0 - 1.0
+            # Keep the full local batch on CPU; only a microbatch resides on CUDA.
+            microbatches = images.split(batch_size)
             optimizer.zero_grad(set_to_none=True)
+            disc_optimizer.zero_grad(set_to_none=True)
             discriminator.eval()
-            with autocast(**autocast_kwargs):
-                recon = ddp_model(images) # keep gradient synced
-                recon_normed = recon * 2.0 - 1.0
-                rec_loss = (recon - images).abs().mean() # L1
-                if use_lpips:
-                    lpips_loss = lpips(real_normed, recon_normed)
-                else:
-                    lpips_loss = rec_loss.new_zeros(())
-                recon_total = rec_loss + perceptual_weight * lpips_loss
-                if use_gan:
-                    fake_aug = disc_aug.aug(recon_normed)
-                    logits_fake, _ = ddp_disc(fake_aug, None)
-                    gan_loss = gen_loss_fn(logits_fake)
-                else:
-                    gan_loss = torch.zeros_like(recon_total)
-            # Calculate adaptive weight outside autocast (autograd operation, not forward pass)
-            if use_gan:
-                adaptive_weight = calculate_adaptive_weight(
-                    recon_total, gan_loss, last_layer, max_d_weight
-                )
-                total_loss = recon_total + disc_weight * adaptive_weight * gan_loss
-            else:
-                adaptive_weight = torch.zeros_like(recon_total)
-                total_loss = recon_total
-            total_loss.float()
+            for param in disc_params:
+                param.requires_grad_(False)
+
+            def generator_losses(model, cpu_images):
+                micro_images = cpu_images.to(device, non_blocking=True)
+                with autocast(**autocast_kwargs):
+                    recon = model(micro_images)
+                    recon_normed = recon * 2.0 - 1.0
+                    rec = (recon - micro_images).abs().mean()
+                    perceptual = lpips(micro_images * 2.0 - 1.0, recon_normed) if use_lpips else rec.new_zeros(())
+                    reconstruction = rec + perceptual_weight * perceptual
+                    if use_gan:
+                        logits_fake, _ = discriminator(disc_aug.aug(recon_normed), None)
+                        adversarial = gen_loss_fn(logits_fake)
+                    else:
+                        adversarial = reconstruction.new_zeros(())
+                return {'recon': rec, 'lpips': perceptual, 'gan': adversarial,
+                        'recon_total': reconstruction}
+
+            gen_metrics, adaptive_weight = generator_backward(
+                ddp_model, microbatches, generator_losses, last_layer,
+                use_gan=use_gan, disc_weight=disc_weight, max_d_weight=max_d_weight,
+                scaler=scaler,
+            )
+            rec_loss, lpips_loss = gen_metrics['recon'], gen_metrics['lpips']
+            gan_loss, total_loss = gen_metrics['gan'], gen_metrics['total']
+            for param in disc_params:
+                param.requires_grad_(True)
             if scaler:
-                scaler.scale(total_loss).backward()
                 if clip_grad is not None:
                     scaler.unscale_(optimizer)
                     torch.nn.utils.clip_grad_norm_(ddp_model.parameters(), clip_grad)
                 scaler.step(optimizer)
                 scaler.update()
             else:
-                total_loss.backward()
                 if clip_grad is not None:
                     torch.nn.utils.clip_grad_norm_(ddp_model.parameters(), clip_grad)
                 optimizer.step()
@@ -426,35 +436,37 @@ def main():
                 ddp_disc.train()
                 for _ in range(disc_updates):
                     disc_optimizer.zero_grad(set_to_none=True)
-                    with autocast(**autocast_kwargs):
-                        # Fresh forward pass with updated model weights (no gradient)
-                        with torch.no_grad():
-                            recon_disc = ddp_model(images)
-                            recon_disc_normed = recon_disc * 2.0 - 1.0
-                        # discretize
-                        fake_detached = recon_disc_normed.clamp(-1.0, 1.0)
-                        fake_detached = torch.round((fake_detached + 1.0) * 127.5) / 127.5 - 1.0
-                        fake_input = disc_aug.aug(fake_detached)
-                        real_input = disc_aug.aug(real_normed)
-                        logits_fake, logits_real = discriminator(fake_input, real_input)
-                        d_loss = disc_loss_fn(logits_real, logits_fake)
-                        accuracy = (logits_real > logits_fake).float().mean() # accuracy of the discriminator
-                    d_loss.float()
+                    disc_metrics = {}
+                    for micro_index, cpu_images in enumerate(microbatches):
+                        micro_images = cpu_images.to(device, non_blocking=True)
+                        with sync_context(ddp_disc, micro_index == accumulation_steps - 1):
+                            with autocast(**autocast_kwargs):
+                                # D observes reconstructions from the completed G update.
+                                with torch.no_grad():
+                                    recon_disc_normed = rae(micro_images) * 2.0 - 1.0
+                                fake_detached = recon_disc_normed.clamp(-1.0, 1.0)
+                                fake_detached = torch.round((fake_detached + 1.0) * 127.5) / 127.5 - 1.0
+                                fake_input = disc_aug.aug(fake_detached)
+                                real_input = disc_aug.aug(micro_images * 2.0 - 1.0)
+                                logits_fake, logits_real = ddp_disc(fake_input, real_input)
+                                d_loss = disc_loss_fn(logits_real, logits_fake)
+                                accuracy = (logits_real > logits_fake).float().mean()
+                                scaled_d_loss = d_loss / accumulation_steps
+                            (scaler.scale(scaled_d_loss) if scaler else scaled_d_loss).backward()
+                        for key, value in {
+                            'disc_loss': d_loss, 'logits_real': logits_real.mean(),
+                            'logits_fake': logits_fake.mean(), 'disc_accuracy': accuracy,
+                        }.items():
+                            disc_metrics[key] = disc_metrics.get(key, 0) + value.detach() / accumulation_steps
+                        del micro_images, recon_disc_normed, fake_detached, fake_input, real_input
+                        del logits_fake, logits_real, d_loss, scaled_d_loss
                     if scaler:
-                        scaler.scale(d_loss).backward()
                         scaler.step(disc_optimizer)
                         scaler.update()
                     else:
-                        d_loss.backward()
                         disc_optimizer.step()
-                    disc_metrics = {
-                        "disc_loss": d_loss.detach(),
-                        "logits_real": logits_real.detach().mean(),
-                        "logits_fake": logits_fake.detach().mean(),
-                        "disc_accuracy": accuracy.detach(),
-                    }
-                    epoch_metrics["disc_loss"] += d_loss.detach()
-                    epoch_metrics["disc_accuracy"] += accuracy.detach()
+                    epoch_metrics["disc_loss"] += disc_metrics['disc_loss']
+                    epoch_metrics["disc_accuracy"] += disc_metrics['disc_accuracy']
                     if disc_scheduler is not None:
                         disc_scheduler.step()
                 ddp_disc.eval()
@@ -492,11 +504,11 @@ def main():
                 )
                 if args.wandb:
                     wandb_utils.log(stats, step=global_step)
-            if global_step % sample_every == 0:
+            if sample_every > 0 and global_step % sample_every == 0:
                 logger.info("Generating EMA samples...")
                 with torch.no_grad():
                     # only keep first 4 sample
-                    sample_images = images[:4]
+                    sample_images = images[:4].to(device, non_blocking=True)
                     samples = ema_model.decode(ema_model.encode(sample_images))
                     # also concat input and reconstruction
                     comparison = torch.cat([sample_images, samples], dim=0).cpu().float()
@@ -532,6 +544,14 @@ def main():
                         wandb_utils.log(eval_stats, step=global_step)
                 logger.info("Evaluation done.")
             global_step += 1
+            if probe is not None and probe.end_step(
+                {"total": total_loss, "recon": rec_loss, "lpips": lpips_loss,
+                 "gan": gan_loss, **disc_metrics},
+                decoder, discriminator, train_disc=train_disc, use_gan=use_gan,
+                disc_updates=disc_updates,
+            ):
+                cleanup_distributed()
+                return
         if rank == 0 and num_batches > 0:
             avg_recon = (epoch_metrics["recon"] / num_batches).item()
             avg_lpips = (epoch_metrics["lpips"] / num_batches).item()

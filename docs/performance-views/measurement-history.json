@@ -1,0 +1,246 @@
+{
+  "schema_version": 1,
+  "title": "RAE Stage-1 historical optimization sequence",
+  "source_commit_current_repo": "86aee71",
+  "upstream_commit": "a4d18c4db766419cbe7cb8c02cd9f7ceb0ec9041",
+  "import_commit": "649d0e7",
+  "final_snapshot": "fd7800d0633a",
+  "sources": [
+    {
+      "name": "nexus-cockpit/speedup_site/data.py",
+      "sha256": "88af5512c3fa482ac39c6caf330e06057fff2c8ffd9450f65697e0174c95fb20",
+      "kind": "existing_aggregate_report",
+      "report_date": "2026-10-14"
+    },
+    {
+      "name": "nexus-cockpit/speedup_site/rounds.py",
+      "sha256": "4a6ca45aa65c88fee8526f42dcdd51c86c35ed3dbf35f42088ade2108dd9816d",
+      "kind": "existing_aggregate_report",
+      "report_date": "2026-10-14"
+    },
+    {
+      "name": "share/speedup/rae.html",
+      "sha256": "e7ed5d4641824a35ea989b89c57c7de58397f734af9d8e833e57dd914714491c",
+      "kind": "existing_aggregate_report",
+      "report_date": "2026-10-14"
+    },
+    {
+      "name": "share/speedup/trace.html",
+      "sha256": "939a17e2fca832f99bfa9c6b84602327348e40d19990928c1cbc26297572fa45",
+      "kind": "existing_aggregate_report",
+      "report_date": "2026-10-14"
+    }
+  ],
+  "protocol": {
+    "hardware": "two H200-class / Hopper GPUs; historical report label is 96 GB",
+    "world_size": 2,
+    "micro_batch_size": 64,
+    "global_batch_size": 128,
+    "batch_evidence": "README historical section: two GPUs with 64 images per GPU; this is not the later global-batch-512 timing",
+    "image_size": 256,
+    "phase_weights": {
+      "reconstruction": 6,
+      "discriminator": 2,
+      "gan": 8
+    },
+    "baseline_label": "upstream FP32",
+    "metric": "weighted steady-state milliseconds per step",
+    "time_axis": "ordered retained candidate measurements; no per-candidate wall-clock timestamps available",
+    "precision_note": "FP32 training argument; preset progressively adds TF32 and local BF16 operations"
+  },
+  "limitations": [
+    "Aggregate history transcribed from the existing 2026-10-14 report, not independently rerun or raw-ledger-verified. Preserve the reported decimal precision.",
+    "speedup is the historical reported full-check value; each full check has its own paired reference timing. Do not reconstruct more precise speedups from the rounded latency column.",
+    "parent_speedup is the reported same-session parent comparison, not the ratio of adjacent historical rows. These values are not isolated per-file causal gains and must not be summed.",
+    "22f7a7 is a same-stack remeasurement, not another optimization.",
+    "Candidate identifiers are historical snapshot prefixes, not Git commits in this repository. File associations describe present implementation locations, not verified per-candidate diffs.",
+    "The historical global batch is 128. Do not combine this sequence with the separate H20 global-batch-512 3.2174x or H200 accumulation-4 5.4144x measurements.",
+    "Statistical short-trajectory PASS does not mean bitwise equivalence. Historical diagnostics remain as documented in README.",
+    "This release also contains GPU-adaptation and discriminator-DDP changes after the trained fd7800d0633a snapshot; full-training quality of the current trainer remains unvalidated."
+  ],
+  "stages": [
+    {
+      "order": 0,
+      "id": "baseline",
+      "label": "Reference",
+      "description": "Upstream FP32 reference",
+      "iter_ms": 1835.53,
+      "speedup": 1.0,
+      "parent_speedup": null,
+      "kind": "reference",
+      "evidence": "reported_reference",
+      "retained": true,
+      "files": []
+    },
+    {
+      "order": 1,
+      "id": "3b49d7",
+      "label": "TF32",
+      "description": "TF32 matmul + cuBLAS",
+      "iter_ms": 721.04,
+      "speedup": 2.5437,
+      "parent_speedup": 2.5437,
+      "kind": "optimization",
+      "evidence": "reported_full_check",
+      "retained": true,
+      "files": [
+        "src/stage1/rae.py",
+        "src/utils/compute_backends.py"
+      ]
+    },
+    {
+      "order": 2,
+      "id": "24dfe9",
+      "label": "Decoder compile",
+      "description": "Compile decoder blocks",
+      "iter_ms": 687.4,
+      "speedup": 2.6701,
+      "parent_speedup": 1.0487,
+      "kind": "optimization",
+      "evidence": "reported_full_check",
+      "retained": true,
+      "files": [
+        "src/stage1/decoders/decoder.py",
+        "src/utils/fusion_backends.py"
+      ]
+    },
+    {
+      "order": 3,
+      "id": "67b6ed",
+      "label": "Disc + layout",
+      "description": "Compile discriminator blocks + full LPIPS channels-last layout",
+      "iter_ms": 669.0,
+      "speedup": 2.7434,
+      "parent_speedup": 1.0287,
+      "kind": "optimization",
+      "evidence": "reported_full_check",
+      "retained": true,
+      "files": [
+        "src/disc/dinodisc.py",
+        "src/disc/lpips.py",
+        "src/utils/fusion_backends.py"
+      ]
+    },
+    {
+      "order": 4,
+      "id": "22f7a7",
+      "label": "Remeasure",
+      "description": "Same stack, changed parent and remeasured; no new optimization",
+      "iter_ms": 653.9,
+      "speedup": 2.8064,
+      "parent_speedup": 1.0217,
+      "kind": "remeasurement",
+      "evidence": "reported_full_check",
+      "retained": true,
+      "files": []
+    },
+    {
+      "order": 5,
+      "id": "a6b87d",
+      "label": "Norm + LPIPS",
+      "description": "Compile discriminator normalization + LPIPS comparison; disable donated buffers",
+      "iter_ms": 602.9,
+      "speedup": 3.0446,
+      "parent_speedup": 1.0848,
+      "kind": "optimization",
+      "evidence": "reported_full_check",
+      "retained": true,
+      "files": [
+        "src/disc/dinodisc.py",
+        "src/disc/lpips.py",
+        "src/utils/fusion_backends.py"
+      ]
+    },
+    {
+      "order": 6,
+      "id": "604efc",
+      "label": "BF16 attention",
+      "description": "Local BF16 decoder/discriminator attention with cuDNN",
+      "iter_ms": 478.44,
+      "speedup": 3.8332,
+      "parent_speedup": 1.2614,
+      "kind": "optimization",
+      "evidence": "reported_full_check",
+      "retained": true,
+      "files": [
+        "src/stage1/decoders/decoder.py",
+        "src/disc/dinodisc.py",
+        "src/utils/local_attention.py"
+      ]
+    },
+    {
+      "order": 7,
+      "id": "6036c8",
+      "label": "Decoder BF16",
+      "description": "Local BF16 decoder MLP and projections",
+      "iter_ms": 360.82,
+      "speedup": 5.0833,
+      "parent_speedup": 1.3292,
+      "kind": "optimization",
+      "evidence": "reported_full_check",
+      "retained": true,
+      "files": [
+        "src/stage1/decoders/decoder.py",
+        "src/utils/local_linear.py"
+      ]
+    },
+    {
+      "order": 8,
+      "id": "fd7800",
+      "label": "Disc BF16",
+      "description": "Local BF16 discriminator MLP and projections",
+      "iter_ms": 345.13,
+      "speedup": 5.3167,
+      "parent_speedup": 1.0578,
+      "kind": "optimization",
+      "evidence": "reported_full_check",
+      "retained": true,
+      "files": [
+        "src/disc/dinodisc.py",
+        "src/utils/local_auxiliary.py"
+      ]
+    }
+  ],
+  "screening_only": [
+    {
+      "id": "4ee76f",
+      "label": "Stride + circular-pad compile",
+      "iter_ms": 341.51,
+      "parent_speedup": 1.008,
+      "speedup": null,
+      "evidence": "screening_only",
+      "retained": false,
+      "reason": "Below 1.02 parent-benefit threshold; not admitted to full check. Do not extend the accepted best curve."
+    }
+  ],
+  "separate_fixed_batch_comparisons": [
+    {
+      "source_commit": "6f0df056db8d9164cda0c32804e347e783e9ad16",
+      "global_batch_size": 512,
+      "world_size": 8,
+      "micro_batch_size": 64,
+      "gradient_accumulation_steps": 1,
+      "image_size": 256,
+      "baseline_weighted_ms": 3375.79929421845,
+      "speedup": 3.217430552686846,
+      "source": "../validation/h20-readme-benchmark-2026-10-15.json",
+      "source_sha256": "6ed2ab1ce3023155aee33fbad9159a0e3f6aeac2ffa6d7588bd94bb0e7f8b74c",
+      "optimized_weighted_ms": 1049.2221165113733,
+      "hardware_label": "H20"
+    },
+    {
+      "source_commit": "2c61b63ba941a81d86393d20a7e3d01de482561d",
+      "global_batch_size": 512,
+      "world_size": 2,
+      "micro_batch_size": 64,
+      "gradient_accumulation_steps": 4,
+      "image_size": 256,
+      "baseline_weighted_ms": 8381.011076533468,
+      "speedup": 5.414431577239851,
+      "source": "../validation/h200-readme-benchmark-2026-10-15.json",
+      "source_sha256": "7c7a5dac386ae064df3df86a7b3934f58a89f2e104f5fb449816453ec23a4eec",
+      "optimized_weighted_ms": 1547.9022972169332,
+      "hardware_label": "H200-class (device reports NVIDIA L20X)"
+    }
+  ]
+}

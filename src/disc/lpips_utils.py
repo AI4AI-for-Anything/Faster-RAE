@@ -36,6 +36,11 @@ def md5_hash(path):
 
 def get_ckpt_path(name, root=None, check=False):
     assert name in URL_MAP
+    explicit = os.environ.get("RAE_LPIPS_CHECKPOINT")
+    if explicit:
+        if not os.path.isfile(explicit) or md5_hash(explicit) != MD5_MAP[name]:
+            raise ValueError("RAE_LPIPS_CHECKPOINT is missing or has an invalid checksum")
+        return explicit
     if root is None:
         root = pathlib.Path(__file__).parent.absolute()
         root = os.path.join(root, '.caches')

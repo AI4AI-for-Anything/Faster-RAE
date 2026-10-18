@@ -1,5 +1,6 @@
 import torch
 import torch.nn as nn
+from utils.compute_backends import configure_matmul
 from .decoders import GeneralDecoder
 from .encoders import ARCHS
 from transformers import AutoConfig, AutoImageProcessor
@@ -32,6 +33,7 @@ class RAE(nn.Module):
         eps: float = 1e-5,
     ):
         super().__init__()
+        configure_matmul()
         encoder_cls = ARCHS[encoder_cls]
         self.encoder: Stage1Protocal = encoder_cls(**encoder_params)
         print(f"encoder_config_path: {encoder_config_path}")

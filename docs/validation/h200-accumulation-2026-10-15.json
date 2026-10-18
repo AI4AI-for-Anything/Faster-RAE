@@ -1,0 +1,457 @@
+{
+  "kind": "capacity_smoke_only",
+  "date": "2026-10-15",
+  "runs": [
+    {
+      "complete": true,
+      "source_sha256": "dbf85452ec2a70b1f1e5aecb50ebc32ebcc88c03695916d989cc64ae3c1d74f1",
+      "budget_gib": 80.0,
+      "reserve_gib": 4.0,
+      "hardware_name": "NVIDIA L20X",
+      "hardware_total_gib": 140.4013671875,
+      "target_world_size": 8,
+      "global_batch_size": 512,
+      "executed_world_size": 1,
+      "batch_plan": {
+        "global_batch_size": 512,
+        "world_size": 8,
+        "micro_batch_size": 64,
+        "gradient_accumulation_steps": 1,
+        "local_batch_size": 64
+      },
+      "attempts": [
+        {
+          "batch": 64,
+          "phase": "recon",
+          "batch_plan": {
+            "global_batch_size": 512,
+            "world_size": 8,
+            "micro_batch_size": 64,
+            "gradient_accumulation_steps": 1,
+            "local_batch_size": 64
+          },
+          "status": "PASS",
+          "monitor_reason": null,
+          "returncode": 0,
+          "device_peak_sampled_gib": 44.5830078125,
+          "complete": true,
+          "peak_allocated_gib": 41.096909523010254,
+          "peak_reserved_gib": 43.2890625,
+          "median_step_ms": 206.72801323235035,
+          "warmup_steps": 3,
+          "compiles_after_warmup": 0,
+          "finite_checks": {
+            "decoder": {
+              "gradient_tensors": 456,
+              "gradients_finite": true,
+              "parameters_finite": true
+            },
+            "discriminator": {
+              "gradient_tensors": 0,
+              "gradients_finite": false,
+              "parameters_finite": true
+            }
+          },
+          "executed_batch_plan": {
+            "global_batch_size": 512,
+            "world_size": 8,
+            "micro_batch_size": 64,
+            "gradient_accumulation_steps": 1,
+            "local_batch_size": 64,
+            "executed_world_size": 1,
+            "executed_batch_size": 64
+          },
+          "steps_completed": 8,
+          "generator_updates": 8,
+          "discriminator_updates": 0,
+          "microbatches_per_step": [
+            1
+          ]
+        },
+        {
+          "batch": 64,
+          "phase": "disc",
+          "batch_plan": {
+            "global_batch_size": 512,
+            "world_size": 8,
+            "micro_batch_size": 64,
+            "gradient_accumulation_steps": 1,
+            "local_batch_size": 64
+          },
+          "status": "PASS",
+          "monitor_reason": null,
+          "returncode": 0,
+          "device_peak_sampled_gib": 43.3212890625,
+          "complete": true,
+          "peak_allocated_gib": 39.63200902938843,
+          "peak_reserved_gib": 42.0234375,
+          "median_step_ms": 330.694449134171,
+          "warmup_steps": 3,
+          "compiles_after_warmup": 0,
+          "finite_checks": {
+            "decoder": {
+              "gradient_tensors": 456,
+              "gradients_finite": true,
+              "parameters_finite": true
+            },
+            "discriminator": {
+              "gradient_tensors": 50,
+              "gradients_finite": true,
+              "parameters_finite": true
+            }
+          },
+          "executed_batch_plan": {
+            "global_batch_size": 512,
+            "world_size": 8,
+            "micro_batch_size": 64,
+            "gradient_accumulation_steps": 1,
+            "local_batch_size": 64,
+            "executed_world_size": 1,
+            "executed_batch_size": 64
+          },
+          "steps_completed": 8,
+          "generator_updates": 8,
+          "discriminator_updates": 8,
+          "microbatches_per_step": [
+            1
+          ]
+        },
+        {
+          "batch": 64,
+          "phase": "gan",
+          "batch_plan": {
+            "global_batch_size": 512,
+            "world_size": 8,
+            "micro_batch_size": 64,
+            "gradient_accumulation_steps": 1,
+            "local_batch_size": 64
+          },
+          "status": "PASS",
+          "monitor_reason": null,
+          "returncode": 0,
+          "device_peak_sampled_gib": 53.7255859375,
+          "complete": true,
+          "peak_allocated_gib": 47.9555983543396,
+          "peak_reserved_gib": 52.427734375,
+          "median_step_ms": 423.5050557181239,
+          "warmup_steps": 3,
+          "compiles_after_warmup": 0,
+          "finite_checks": {
+            "decoder": {
+              "gradient_tensors": 456,
+              "gradients_finite": true,
+              "parameters_finite": true
+            },
+            "discriminator": {
+              "gradient_tensors": 50,
+              "gradients_finite": true,
+              "parameters_finite": true
+            }
+          },
+          "executed_batch_plan": {
+            "global_batch_size": 512,
+            "world_size": 8,
+            "micro_batch_size": 64,
+            "gradient_accumulation_steps": 1,
+            "local_batch_size": 64,
+            "executed_world_size": 1,
+            "executed_batch_size": 64
+          },
+          "steps_completed": 8,
+          "generator_updates": 8,
+          "discriminator_updates": 8,
+          "microbatches_per_step": [
+            1
+          ]
+        }
+      ]
+    },
+    {
+      "complete": true,
+      "source_sha256": "dbf85452ec2a70b1f1e5aecb50ebc32ebcc88c03695916d989cc64ae3c1d74f1",
+      "budget_gib": 48.0,
+      "reserve_gib": 4.0,
+      "hardware_name": "NVIDIA L20X",
+      "hardware_total_gib": 140.4013671875,
+      "target_world_size": 8,
+      "global_batch_size": 512,
+      "executed_world_size": 1,
+      "batch_plan": {
+        "global_batch_size": 512,
+        "world_size": 8,
+        "micro_batch_size": 32,
+        "gradient_accumulation_steps": 2,
+        "local_batch_size": 64
+      },
+      "attempts": [
+        {
+          "batch": 64,
+          "phase": "recon",
+          "batch_plan": {
+            "global_batch_size": 512,
+            "world_size": 8,
+            "micro_batch_size": 64,
+            "gradient_accumulation_steps": 1,
+            "local_batch_size": 64
+          },
+          "status": "PASS",
+          "monitor_reason": null,
+          "returncode": 0,
+          "device_peak_sampled_gib": 44.5830078125,
+          "complete": true,
+          "peak_allocated_gib": 41.096909523010254,
+          "peak_reserved_gib": 43.2890625,
+          "median_step_ms": 206.5450232475996,
+          "warmup_steps": 3,
+          "compiles_after_warmup": 0,
+          "finite_checks": {
+            "decoder": {
+              "gradient_tensors": 456,
+              "gradients_finite": true,
+              "parameters_finite": true
+            },
+            "discriminator": {
+              "gradient_tensors": 0,
+              "gradients_finite": false,
+              "parameters_finite": true
+            }
+          },
+          "executed_batch_plan": {
+            "global_batch_size": 512,
+            "world_size": 8,
+            "micro_batch_size": 64,
+            "gradient_accumulation_steps": 1,
+            "local_batch_size": 64,
+            "executed_world_size": 1,
+            "executed_batch_size": 64
+          },
+          "steps_completed": 8,
+          "generator_updates": 8,
+          "discriminator_updates": 0,
+          "microbatches_per_step": [
+            1
+          ]
+        },
+        {
+          "batch": 64,
+          "phase": "disc",
+          "batch_plan": {
+            "global_batch_size": 512,
+            "world_size": 8,
+            "micro_batch_size": 64,
+            "gradient_accumulation_steps": 1,
+            "local_batch_size": 64
+          },
+          "status": "PASS",
+          "monitor_reason": null,
+          "returncode": 0,
+          "device_peak_sampled_gib": 43.3193359375,
+          "complete": true,
+          "peak_allocated_gib": 39.63200902938843,
+          "peak_reserved_gib": 42.0234375,
+          "median_step_ms": 331.87831938266754,
+          "warmup_steps": 3,
+          "compiles_after_warmup": 0,
+          "finite_checks": {
+            "decoder": {
+              "gradient_tensors": 456,
+              "gradients_finite": true,
+              "parameters_finite": true
+            },
+            "discriminator": {
+              "gradient_tensors": 50,
+              "gradients_finite": true,
+              "parameters_finite": true
+            }
+          },
+          "executed_batch_plan": {
+            "global_batch_size": 512,
+            "world_size": 8,
+            "micro_batch_size": 64,
+            "gradient_accumulation_steps": 1,
+            "local_batch_size": 64,
+            "executed_world_size": 1,
+            "executed_batch_size": 64
+          },
+          "steps_completed": 8,
+          "generator_updates": 8,
+          "discriminator_updates": 8,
+          "microbatches_per_step": [
+            1
+          ]
+        },
+        {
+          "batch": 64,
+          "phase": "gan",
+          "batch_plan": {
+            "global_batch_size": 512,
+            "world_size": 8,
+            "micro_batch_size": 64,
+            "gradient_accumulation_steps": 1,
+            "local_batch_size": 64
+          },
+          "status": "OOM",
+          "monitor_reason": null,
+          "returncode": 1,
+          "device_peak_sampled_gib": 45.0908203125,
+          "complete": null,
+          "peak_allocated_gib": null,
+          "peak_reserved_gib": null,
+          "median_step_ms": null,
+          "warmup_steps": null,
+          "compiles_after_warmup": null,
+          "finite_checks": null,
+          "executed_batch_plan": null,
+          "steps_completed": 0,
+          "generator_updates": 0,
+          "discriminator_updates": 0,
+          "microbatches_per_step": []
+        },
+        {
+          "batch": 32,
+          "phase": "recon",
+          "batch_plan": {
+            "global_batch_size": 512,
+            "world_size": 8,
+            "micro_batch_size": 32,
+            "gradient_accumulation_steps": 2,
+            "local_batch_size": 64
+          },
+          "status": "PASS",
+          "monitor_reason": null,
+          "returncode": 0,
+          "device_peak_sampled_gib": 30.4169921875,
+          "complete": true,
+          "peak_allocated_gib": 27.578347206115723,
+          "peak_reserved_gib": 29.123046875,
+          "median_step_ms": 221.62443958222866,
+          "warmup_steps": 3,
+          "compiles_after_warmup": 0,
+          "finite_checks": {
+            "decoder": {
+              "gradient_tensors": 456,
+              "gradients_finite": true,
+              "parameters_finite": true
+            },
+            "discriminator": {
+              "gradient_tensors": 0,
+              "gradients_finite": false,
+              "parameters_finite": true
+            }
+          },
+          "executed_batch_plan": {
+            "global_batch_size": 512,
+            "world_size": 8,
+            "micro_batch_size": 32,
+            "gradient_accumulation_steps": 2,
+            "local_batch_size": 64,
+            "executed_world_size": 1,
+            "executed_batch_size": 64
+          },
+          "steps_completed": 8,
+          "generator_updates": 8,
+          "discriminator_updates": 0,
+          "microbatches_per_step": [
+            2
+          ]
+        },
+        {
+          "batch": 32,
+          "phase": "disc",
+          "batch_plan": {
+            "global_batch_size": 512,
+            "world_size": 8,
+            "micro_batch_size": 32,
+            "gradient_accumulation_steps": 2,
+            "local_batch_size": 64
+          },
+          "status": "PASS",
+          "monitor_reason": null,
+          "returncode": 0,
+          "device_peak_sampled_gib": 28.9619140625,
+          "complete": true,
+          "peak_allocated_gib": 26.11549997329712,
+          "peak_reserved_gib": 27.6640625,
+          "median_step_ms": 363.5091409087181,
+          "warmup_steps": 3,
+          "compiles_after_warmup": 0,
+          "finite_checks": {
+            "decoder": {
+              "gradient_tensors": 456,
+              "gradients_finite": true,
+              "parameters_finite": true
+            },
+            "discriminator": {
+              "gradient_tensors": 50,
+              "gradients_finite": true,
+              "parameters_finite": true
+            }
+          },
+          "executed_batch_plan": {
+            "global_batch_size": 512,
+            "world_size": 8,
+            "micro_batch_size": 32,
+            "gradient_accumulation_steps": 2,
+            "local_batch_size": 64,
+            "executed_world_size": 1,
+            "executed_batch_size": 64
+          },
+          "steps_completed": 8,
+          "generator_updates": 8,
+          "discriminator_updates": 8,
+          "microbatches_per_step": [
+            2
+          ]
+        },
+        {
+          "batch": 32,
+          "phase": "gan",
+          "batch_plan": {
+            "global_batch_size": 512,
+            "world_size": 8,
+            "micro_batch_size": 32,
+            "gradient_accumulation_steps": 2,
+            "local_batch_size": 64
+          },
+          "status": "PASS",
+          "monitor_reason": null,
+          "returncode": 0,
+          "device_peak_sampled_gib": 31.5751953125,
+          "complete": true,
+          "peak_allocated_gib": 28.323572158813477,
+          "peak_reserved_gib": 30.275390625,
+          "median_step_ms": 570.1261181384325,
+          "warmup_steps": 3,
+          "compiles_after_warmup": 0,
+          "finite_checks": {
+            "decoder": {
+              "gradient_tensors": 456,
+              "gradients_finite": true,
+              "parameters_finite": true
+            },
+            "discriminator": {
+              "gradient_tensors": 50,
+              "gradients_finite": true,
+              "parameters_finite": true
+            }
+          },
+          "executed_batch_plan": {
+            "global_batch_size": 512,
+            "world_size": 8,
+            "micro_batch_size": 32,
+            "gradient_accumulation_steps": 2,
+            "local_batch_size": 64,
+            "executed_world_size": 1,
+            "executed_batch_size": 64
+          },
+          "steps_completed": 8,
+          "generator_updates": 8,
+          "discriminator_updates": 8,
+          "microbatches_per_step": [
+            2
+          ]
+        }
+      ]
+    }
+  ]
+}

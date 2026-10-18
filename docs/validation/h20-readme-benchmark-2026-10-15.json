@@ -1,0 +1,2396 @@
+{
+  "kind": "preset_ab_timing",
+  "source_commit": "6f0df056db8d9164cda0c32804e347e783e9ad16",
+  "source_sha256": "dbf85452ec2a70b1f1e5aecb50ebc32ebcc88c03695916d989cc64ae3c1d74f1",
+  "timer_sha256": "c2dea443a0c9b9db2bbe4bad033dc095979f77d02f16afec74f9b47082abfe0c",
+  "global_batch_size": 512,
+  "world_size": 8,
+  "micro_batch_size": 64,
+  "gradient_accumulation_steps": 1,
+  "image_size": 256,
+  "warmup_steps_per_phase": 5,
+  "window_steps": 5,
+  "windows_per_phase": 2,
+  "phase_weights": {
+    "recon": 6,
+    "disc": 2,
+    "gan": 8
+  },
+  "precision": "fp32",
+  "memory_cap_gib": null,
+  "runs": {
+    "baseline_a": {
+      "returncode": 0,
+      "hardware": [
+        {
+          "index": "0",
+          "name": "NVIDIA H20",
+          "total_mib": "97871",
+          "used_mib": "0",
+          "utilization": "0"
+        },
+        {
+          "index": "1",
+          "name": "NVIDIA H20",
+          "total_mib": "97871",
+          "used_mib": "0",
+          "utilization": "0"
+        },
+        {
+          "index": "2",
+          "name": "NVIDIA H20",
+          "total_mib": "97871",
+          "used_mib": "0",
+          "utilization": "0"
+        },
+        {
+          "index": "3",
+          "name": "NVIDIA H20",
+          "total_mib": "97871",
+          "used_mib": "0",
+          "utilization": "0"
+        },
+        {
+          "index": "4",
+          "name": "NVIDIA H20",
+          "total_mib": "97871",
+          "used_mib": "0",
+          "utilization": "0"
+        },
+        {
+          "index": "5",
+          "name": "NVIDIA H20",
+          "total_mib": "97871",
+          "used_mib": "0",
+          "utilization": "0"
+        },
+        {
+          "index": "6",
+          "name": "NVIDIA H20",
+          "total_mib": "97871",
+          "used_mib": "0",
+          "utilization": "0"
+        },
+        {
+          "index": "7",
+          "name": "NVIDIA H20",
+          "total_mib": "97871",
+          "used_mib": "0",
+          "utilization": "0"
+        }
+      ],
+      "device_peak_sampled_gib": {
+        "0": 93.7841796875,
+        "1": 93.7841796875,
+        "2": 93.7841796875,
+        "3": 93.7841796875,
+        "4": 93.7841796875,
+        "5": 93.7841796875,
+        "6": 93.7841796875,
+        "7": 93.7841796875
+      },
+      "wall_seconds": 212.39018796899472,
+      "environment": {},
+      "rank_results": [
+        {
+          "status": "ok",
+          "error": null,
+          "rank": 0,
+          "world_size": 8,
+          "steps_per_epoch": 15,
+          "warmup": [
+            5,
+            5,
+            5
+          ],
+          "window": [
+            5,
+            5,
+            5
+          ],
+          "repeats": 2,
+          "generator_steps_seen": 45,
+          "generator_param_elements": 415352704,
+          "startup_to_first_step_s": 56.710105531004956,
+          "peak_memory_allocated_bytes": 89200744960,
+          "peak_memory_reserved_bytes": 99010740224,
+          "windows": [
+            {
+              "phase": "recon",
+              "k": 0,
+              "steps": 5,
+              "seconds": 11.28083879101905,
+              "other_optimizer_steps": 0,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "recon",
+              "k": 1,
+              "steps": 5,
+              "seconds": 11.325378365989309,
+              "other_optimizer_steps": 0,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "disc",
+              "k": 0,
+              "steps": 5,
+              "seconds": 17.318037969002035,
+              "other_optimizer_steps": 5,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "disc",
+              "k": 1,
+              "steps": 5,
+              "seconds": 17.35192255000584,
+              "other_optimizer_steps": 5,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "gan",
+              "k": 0,
+              "steps": 5,
+              "seconds": 20.91814602201339,
+              "other_optimizer_steps": 5,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "gan",
+              "k": 1,
+              "steps": 5,
+              "seconds": 20.907776412990643,
+              "other_optimizer_steps": 5,
+              "compiles_in_window": 0
+            }
+          ],
+          "detail_window": null,
+          "math_mode": "default",
+          "math_flags_at_end": {
+            "matmul.allow_tf32": false,
+            "cudnn.allow_tf32": true
+          },
+          "entrypoint": "src/train_stage1.py"
+        },
+        {
+          "status": "ok",
+          "error": null,
+          "rank": 1,
+          "world_size": 8,
+          "steps_per_epoch": 15,
+          "warmup": [
+            5,
+            5,
+            5
+          ],
+          "window": [
+            5,
+            5,
+            5
+          ],
+          "repeats": 2,
+          "generator_steps_seen": 45,
+          "generator_param_elements": 415352704,
+          "startup_to_first_step_s": 56.655629963992396,
+          "peak_memory_allocated_bytes": 89200744960,
+          "peak_memory_reserved_bytes": 99010740224,
+          "windows": [
+            {
+              "phase": "recon",
+              "k": 0,
+              "steps": 5,
+              "seconds": 11.28115180300665,
+              "other_optimizer_steps": 0,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "recon",
+              "k": 1,
+              "steps": 5,
+              "seconds": 11.325586310005747,
+              "other_optimizer_steps": 0,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "disc",
+              "k": 0,
+              "steps": 5,
+              "seconds": 17.318006962013897,
+              "other_optimizer_steps": 5,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "disc",
+              "k": 1,
+              "steps": 5,
+              "seconds": 17.352244936977513,
+              "other_optimizer_steps": 5,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "gan",
+              "k": 0,
+              "steps": 5,
+              "seconds": 20.918970892991638,
+              "other_optimizer_steps": 5,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "gan",
+              "k": 1,
+              "steps": 5,
+              "seconds": 20.906919636006933,
+              "other_optimizer_steps": 5,
+              "compiles_in_window": 0
+            }
+          ],
+          "detail_window": null,
+          "math_mode": "default",
+          "math_flags_at_end": {
+            "matmul.allow_tf32": false,
+            "cudnn.allow_tf32": true
+          },
+          "entrypoint": "src/train_stage1.py"
+        },
+        {
+          "status": "ok",
+          "error": null,
+          "rank": 2,
+          "world_size": 8,
+          "steps_per_epoch": 15,
+          "warmup": [
+            5,
+            5,
+            5
+          ],
+          "window": [
+            5,
+            5,
+            5
+          ],
+          "repeats": 2,
+          "generator_steps_seen": 45,
+          "generator_param_elements": 415352704,
+          "startup_to_first_step_s": 56.4811618179956,
+          "peak_memory_allocated_bytes": 89200744960,
+          "peak_memory_reserved_bytes": 99010740224,
+          "windows": [
+            {
+              "phase": "recon",
+              "k": 0,
+              "steps": 5,
+              "seconds": 11.281009957980132,
+              "other_optimizer_steps": 0,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "recon",
+              "k": 1,
+              "steps": 5,
+              "seconds": 11.325404874020023,
+              "other_optimizer_steps": 0,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "disc",
+              "k": 0,
+              "steps": 5,
+              "seconds": 17.316114660003223,
+              "other_optimizer_steps": 5,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "disc",
+              "k": 1,
+              "steps": 5,
+              "seconds": 17.3523863540031,
+              "other_optimizer_steps": 5,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "gan",
+              "k": 0,
+              "steps": 5,
+              "seconds": 20.918447461008327,
+              "other_optimizer_steps": 5,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "gan",
+              "k": 1,
+              "steps": 5,
+              "seconds": 20.907933273003437,
+              "other_optimizer_steps": 5,
+              "compiles_in_window": 0
+            }
+          ],
+          "detail_window": null,
+          "math_mode": "default",
+          "math_flags_at_end": {
+            "matmul.allow_tf32": false,
+            "cudnn.allow_tf32": true
+          },
+          "entrypoint": "src/train_stage1.py"
+        },
+        {
+          "status": "ok",
+          "error": null,
+          "rank": 3,
+          "world_size": 8,
+          "steps_per_epoch": 15,
+          "warmup": [
+            5,
+            5,
+            5
+          ],
+          "window": [
+            5,
+            5,
+            5
+          ],
+          "repeats": 2,
+          "generator_steps_seen": 45,
+          "generator_param_elements": 415352704,
+          "startup_to_first_step_s": 56.683072473999346,
+          "peak_memory_allocated_bytes": 89200744960,
+          "peak_memory_reserved_bytes": 99010740224,
+          "windows": [
+            {
+              "phase": "recon",
+              "k": 0,
+              "steps": 5,
+              "seconds": 11.282143600983545,
+              "other_optimizer_steps": 0,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "recon",
+              "k": 1,
+              "steps": 5,
+              "seconds": 11.323143414017977,
+              "other_optimizer_steps": 0,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "disc",
+              "k": 0,
+              "steps": 5,
+              "seconds": 17.31874484202126,
+              "other_optimizer_steps": 5,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "disc",
+              "k": 1,
+              "steps": 5,
+              "seconds": 17.352957034978317,
+              "other_optimizer_steps": 5,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "gan",
+              "k": 0,
+              "steps": 5,
+              "seconds": 20.91850160600734,
+              "other_optimizer_steps": 5,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "gan",
+              "k": 1,
+              "steps": 5,
+              "seconds": 20.906938700994942,
+              "other_optimizer_steps": 5,
+              "compiles_in_window": 0
+            }
+          ],
+          "detail_window": null,
+          "math_mode": "default",
+          "math_flags_at_end": {
+            "matmul.allow_tf32": false,
+            "cudnn.allow_tf32": true
+          },
+          "entrypoint": "src/train_stage1.py"
+        },
+        {
+          "status": "ok",
+          "error": null,
+          "rank": 4,
+          "world_size": 8,
+          "steps_per_epoch": 15,
+          "warmup": [
+            5,
+            5,
+            5
+          ],
+          "window": [
+            5,
+            5,
+            5
+          ],
+          "repeats": 2,
+          "generator_steps_seen": 45,
+          "generator_param_elements": 415352704,
+          "startup_to_first_step_s": 56.59425408000243,
+          "peak_memory_allocated_bytes": 89200744960,
+          "peak_memory_reserved_bytes": 99010740224,
+          "windows": [
+            {
+              "phase": "recon",
+              "k": 0,
+              "steps": 5,
+              "seconds": 11.28020882801502,
+              "other_optimizer_steps": 0,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "recon",
+              "k": 1,
+              "steps": 5,
+              "seconds": 11.32544018398039,
+              "other_optimizer_steps": 0,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "disc",
+              "k": 0,
+              "steps": 5,
+              "seconds": 17.318342800979735,
+              "other_optimizer_steps": 5,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "disc",
+              "k": 1,
+              "steps": 5,
+              "seconds": 17.351701363018947,
+              "other_optimizer_steps": 5,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "gan",
+              "k": 0,
+              "steps": 5,
+              "seconds": 20.91836557901115,
+              "other_optimizer_steps": 5,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "gan",
+              "k": 1,
+              "steps": 5,
+              "seconds": 20.907341370999347,
+              "other_optimizer_steps": 5,
+              "compiles_in_window": 0
+            }
+          ],
+          "detail_window": null,
+          "math_mode": "default",
+          "math_flags_at_end": {
+            "matmul.allow_tf32": false,
+            "cudnn.allow_tf32": true
+          },
+          "entrypoint": "src/train_stage1.py"
+        },
+        {
+          "status": "ok",
+          "error": null,
+          "rank": 5,
+          "world_size": 8,
+          "steps_per_epoch": 15,
+          "warmup": [
+            5,
+            5,
+            5
+          ],
+          "window": [
+            5,
+            5,
+            5
+          ],
+          "repeats": 2,
+          "generator_steps_seen": 45,
+          "generator_param_elements": 415352704,
+          "startup_to_first_step_s": 56.584110508003505,
+          "peak_memory_allocated_bytes": 89200744960,
+          "peak_memory_reserved_bytes": 99010740224,
+          "windows": [
+            {
+              "phase": "recon",
+              "k": 0,
+              "steps": 5,
+              "seconds": 11.279320542991627,
+              "other_optimizer_steps": 0,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "recon",
+              "k": 1,
+              "steps": 5,
+              "seconds": 11.325823482999112,
+              "other_optimizer_steps": 0,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "disc",
+              "k": 0,
+              "steps": 5,
+              "seconds": 17.317121770000085,
+              "other_optimizer_steps": 5,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "disc",
+              "k": 1,
+              "steps": 5,
+              "seconds": 17.350738556997385,
+              "other_optimizer_steps": 5,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "gan",
+              "k": 0,
+              "steps": 5,
+              "seconds": 20.916823136009043,
+              "other_optimizer_steps": 5,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "gan",
+              "k": 1,
+              "steps": 5,
+              "seconds": 20.908198375982465,
+              "other_optimizer_steps": 5,
+              "compiles_in_window": 0
+            }
+          ],
+          "detail_window": null,
+          "math_mode": "default",
+          "math_flags_at_end": {
+            "matmul.allow_tf32": false,
+            "cudnn.allow_tf32": true
+          },
+          "entrypoint": "src/train_stage1.py"
+        },
+        {
+          "status": "ok",
+          "error": null,
+          "rank": 6,
+          "world_size": 8,
+          "steps_per_epoch": 15,
+          "warmup": [
+            5,
+            5,
+            5
+          ],
+          "window": [
+            5,
+            5,
+            5
+          ],
+          "repeats": 2,
+          "generator_steps_seen": 45,
+          "generator_param_elements": 415352704,
+          "startup_to_first_step_s": 56.71611827900051,
+          "peak_memory_allocated_bytes": 89200744960,
+          "peak_memory_reserved_bytes": 99010740224,
+          "windows": [
+            {
+              "phase": "recon",
+              "k": 0,
+              "steps": 5,
+              "seconds": 11.280916158022592,
+              "other_optimizer_steps": 0,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "recon",
+              "k": 1,
+              "steps": 5,
+              "seconds": 11.325382910988992,
+              "other_optimizer_steps": 0,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "disc",
+              "k": 0,
+              "steps": 5,
+              "seconds": 17.31819419801468,
+              "other_optimizer_steps": 5,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "disc",
+              "k": 1,
+              "steps": 5,
+              "seconds": 17.35195398898213,
+              "other_optimizer_steps": 5,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "gan",
+              "k": 0,
+              "steps": 5,
+              "seconds": 20.919171079993248,
+              "other_optimizer_steps": 5,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "gan",
+              "k": 1,
+              "steps": 5,
+              "seconds": 20.90673687797971,
+              "other_optimizer_steps": 5,
+              "compiles_in_window": 0
+            }
+          ],
+          "detail_window": null,
+          "math_mode": "default",
+          "math_flags_at_end": {
+            "matmul.allow_tf32": false,
+            "cudnn.allow_tf32": true
+          },
+          "entrypoint": "src/train_stage1.py"
+        },
+        {
+          "status": "ok",
+          "error": null,
+          "rank": 7,
+          "world_size": 8,
+          "steps_per_epoch": 15,
+          "warmup": [
+            5,
+            5,
+            5
+          ],
+          "window": [
+            5,
+            5,
+            5
+          ],
+          "repeats": 2,
+          "generator_steps_seen": 45,
+          "generator_param_elements": 415352704,
+          "startup_to_first_step_s": 56.66412468699855,
+          "peak_memory_allocated_bytes": 89200744960,
+          "peak_memory_reserved_bytes": 99010740224,
+          "windows": [
+            {
+              "phase": "recon",
+              "k": 0,
+              "steps": 5,
+              "seconds": 11.281363186019007,
+              "other_optimizer_steps": 0,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "recon",
+              "k": 1,
+              "steps": 5,
+              "seconds": 11.325323001976358,
+              "other_optimizer_steps": 0,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "disc",
+              "k": 0,
+              "steps": 5,
+              "seconds": 17.318306528002722,
+              "other_optimizer_steps": 5,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "disc",
+              "k": 1,
+              "steps": 5,
+              "seconds": 17.349295641004574,
+              "other_optimizer_steps": 5,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "gan",
+              "k": 0,
+              "steps": 5,
+              "seconds": 20.919191454013344,
+              "other_optimizer_steps": 5,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "gan",
+              "k": 1,
+              "steps": 5,
+              "seconds": 20.90643172900309,
+              "other_optimizer_steps": 5,
+              "compiles_in_window": 0
+            }
+          ],
+          "detail_window": null,
+          "math_mode": "default",
+          "math_flags_at_end": {
+            "matmul.allow_tf32": false,
+            "cudnn.allow_tf32": true
+          },
+          "entrypoint": "src/train_stage1.py"
+        }
+      ],
+      "phases_ms": {
+        "recon": 2260.7967083982658,
+        "disc": 3467.1701876999578,
+        "gan": 4182.738982999581
+      },
+      "window_ms": {
+        "recon": [
+          2256.428720196709,
+          2265.1646965998225
+        ],
+        "disc": [
+          3463.748968404252,
+          3470.5914069956634
+        ],
+        "gan": [
+          4183.838290802669,
+          4181.639675196493
+        ]
+      },
+      "weighted_ms_per_step": 3372.564530611635
+    },
+    "faster": {
+      "returncode": 0,
+      "hardware": [
+        {
+          "index": "0",
+          "name": "NVIDIA H20",
+          "total_mib": "97871",
+          "used_mib": "0",
+          "utilization": "0"
+        },
+        {
+          "index": "1",
+          "name": "NVIDIA H20",
+          "total_mib": "97871",
+          "used_mib": "0",
+          "utilization": "0"
+        },
+        {
+          "index": "2",
+          "name": "NVIDIA H20",
+          "total_mib": "97871",
+          "used_mib": "0",
+          "utilization": "0"
+        },
+        {
+          "index": "3",
+          "name": "NVIDIA H20",
+          "total_mib": "97871",
+          "used_mib": "0",
+          "utilization": "0"
+        },
+        {
+          "index": "4",
+          "name": "NVIDIA H20",
+          "total_mib": "97871",
+          "used_mib": "0",
+          "utilization": "0"
+        },
+        {
+          "index": "5",
+          "name": "NVIDIA H20",
+          "total_mib": "97871",
+          "used_mib": "0",
+          "utilization": "0"
+        },
+        {
+          "index": "6",
+          "name": "NVIDIA H20",
+          "total_mib": "97871",
+          "used_mib": "0",
+          "utilization": "0"
+        },
+        {
+          "index": "7",
+          "name": "NVIDIA H20",
+          "total_mib": "97871",
+          "used_mib": "0",
+          "utilization": "0"
+        }
+      ],
+      "device_peak_sampled_gib": {
+        "0": 52.9619140625,
+        "1": 52.9638671875,
+        "2": 52.9638671875,
+        "3": 52.9130859375,
+        "4": 52.9638671875,
+        "5": 52.9130859375,
+        "6": 52.9638671875,
+        "7": 52.9130859375
+      },
+      "wall_seconds": 184.28786844800925,
+      "environment": {
+        "RAE_MATMUL_TF32": "1",
+        "RAE_BLAS_LIBRARY": "cublas",
+        "RAE_COMPILE_REGION": "decoder_blocks",
+        "RAE_COMPILE_MODE": "max-autotune-no-cudagraphs",
+        "RAE_COMPILE_DISC_BLOCKS": "1",
+        "RAE_AUX_COMPILE_MODE": "max-autotune-no-cudagraphs",
+        "RAE_LPIPS_LAYOUT": "full",
+        "RAE_DISABLE_DONATED_BUFFER": "1",
+        "RAE_COMPILE_LPIPS_COMPARE": "1",
+        "RAE_LPIPS_COMPILE_MODE": "default",
+        "RAE_COMPILE_DISC_NORM": "1",
+        "RAE_DISC_NORM_COMPILE_MODE": "default",
+        "RAE_LOCAL_ATTN_BACKEND": "cudnn",
+        "RAE_DISC_ATTN_BF16": "1",
+        "RAE_DECODER_ATTN_BF16": "1",
+        "RAE_DECODER_MLP_BF16": "1",
+        "RAE_DECODER_PROJ_BF16": "1",
+        "RAE_DISC_MLP_BF16": "1",
+        "RAE_DISC_PROJ_BF16": "1"
+      },
+      "rank_results": [
+        {
+          "status": "ok",
+          "error": null,
+          "rank": 0,
+          "world_size": 8,
+          "steps_per_epoch": 15,
+          "warmup": [
+            5,
+            5,
+            5
+          ],
+          "window": [
+            5,
+            5,
+            5
+          ],
+          "repeats": 2,
+          "generator_steps_seen": 45,
+          "generator_param_elements": 415352704,
+          "startup_to_first_step_s": 96.20461961399997,
+          "peak_memory_allocated_bytes": 51512912896,
+          "peak_memory_reserved_bytes": 55171874816,
+          "windows": [
+            {
+              "phase": "recon",
+              "k": 0,
+              "steps": 5,
+              "seconds": 3.452158900006907,
+              "other_optimizer_steps": 0,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "recon",
+              "k": 1,
+              "steps": 5,
+              "seconds": 3.447311063995585,
+              "other_optimizer_steps": 0,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "disc",
+              "k": 0,
+              "steps": 5,
+              "seconds": 5.323065903008683,
+              "other_optimizer_steps": 5,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "disc",
+              "k": 1,
+              "steps": 5,
+              "seconds": 5.320440661977045,
+              "other_optimizer_steps": 5,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "gan",
+              "k": 0,
+              "steps": 5,
+              "seconds": 6.574215661006747,
+              "other_optimizer_steps": 5,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "gan",
+              "k": 1,
+              "steps": 5,
+              "seconds": 6.574503490992356,
+              "other_optimizer_steps": 5,
+              "compiles_in_window": 0
+            }
+          ],
+          "detail_window": null,
+          "math_mode": "default",
+          "math_flags_at_end": {
+            "matmul.allow_tf32": true,
+            "cudnn.allow_tf32": true
+          },
+          "entrypoint": "src/train_stage1.py"
+        },
+        {
+          "status": "ok",
+          "error": null,
+          "rank": 1,
+          "world_size": 8,
+          "steps_per_epoch": 15,
+          "warmup": [
+            5,
+            5,
+            5
+          ],
+          "window": [
+            5,
+            5,
+            5
+          ],
+          "repeats": 2,
+          "generator_steps_seen": 45,
+          "generator_param_elements": 415352704,
+          "startup_to_first_step_s": 96.16525551199447,
+          "peak_memory_allocated_bytes": 51512912896,
+          "peak_memory_reserved_bytes": 55171874816,
+          "windows": [
+            {
+              "phase": "recon",
+              "k": 0,
+              "steps": 5,
+              "seconds": 3.452194354002131,
+              "other_optimizer_steps": 0,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "recon",
+              "k": 1,
+              "steps": 5,
+              "seconds": 3.447280044987565,
+              "other_optimizer_steps": 0,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "disc",
+              "k": 0,
+              "steps": 5,
+              "seconds": 5.323044058983214,
+              "other_optimizer_steps": 5,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "disc",
+              "k": 1,
+              "steps": 5,
+              "seconds": 5.320421241020085,
+              "other_optimizer_steps": 5,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "gan",
+              "k": 0,
+              "steps": 5,
+              "seconds": 6.5741570809914265,
+              "other_optimizer_steps": 5,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "gan",
+              "k": 1,
+              "steps": 5,
+              "seconds": 6.574468137987424,
+              "other_optimizer_steps": 5,
+              "compiles_in_window": 0
+            }
+          ],
+          "detail_window": null,
+          "math_mode": "default",
+          "math_flags_at_end": {
+            "matmul.allow_tf32": true,
+            "cudnn.allow_tf32": true
+          },
+          "entrypoint": "src/train_stage1.py"
+        },
+        {
+          "status": "ok",
+          "error": null,
+          "rank": 2,
+          "world_size": 8,
+          "steps_per_epoch": 15,
+          "warmup": [
+            5,
+            5,
+            5
+          ],
+          "window": [
+            5,
+            5,
+            5
+          ],
+          "repeats": 2,
+          "generator_steps_seen": 45,
+          "generator_param_elements": 415352704,
+          "startup_to_first_step_s": 96.27310654800385,
+          "peak_memory_allocated_bytes": 51512912896,
+          "peak_memory_reserved_bytes": 55171874816,
+          "windows": [
+            {
+              "phase": "recon",
+              "k": 0,
+              "steps": 5,
+              "seconds": 3.452231839997694,
+              "other_optimizer_steps": 0,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "recon",
+              "k": 1,
+              "steps": 5,
+              "seconds": 3.447294123994652,
+              "other_optimizer_steps": 0,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "disc",
+              "k": 0,
+              "steps": 5,
+              "seconds": 5.3231027940055355,
+              "other_optimizer_steps": 5,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "disc",
+              "k": 1,
+              "steps": 5,
+              "seconds": 5.32038801399176,
+              "other_optimizer_steps": 5,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "gan",
+              "k": 0,
+              "steps": 5,
+              "seconds": 6.574204064003425,
+              "other_optimizer_steps": 5,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "gan",
+              "k": 1,
+              "steps": 5,
+              "seconds": 6.574499754991848,
+              "other_optimizer_steps": 5,
+              "compiles_in_window": 0
+            }
+          ],
+          "detail_window": null,
+          "math_mode": "default",
+          "math_flags_at_end": {
+            "matmul.allow_tf32": true,
+            "cudnn.allow_tf32": true
+          },
+          "entrypoint": "src/train_stage1.py"
+        },
+        {
+          "status": "ok",
+          "error": null,
+          "rank": 3,
+          "world_size": 8,
+          "steps_per_epoch": 15,
+          "warmup": [
+            5,
+            5,
+            5
+          ],
+          "window": [
+            5,
+            5,
+            5
+          ],
+          "repeats": 2,
+          "generator_steps_seen": 45,
+          "generator_param_elements": 415352704,
+          "startup_to_first_step_s": 96.27210997301154,
+          "peak_memory_allocated_bytes": 51517016576,
+          "peak_memory_reserved_bytes": 55117348864,
+          "windows": [
+            {
+              "phase": "recon",
+              "k": 0,
+              "steps": 5,
+              "seconds": 3.452117057982832,
+              "other_optimizer_steps": 0,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "recon",
+              "k": 1,
+              "steps": 5,
+              "seconds": 3.4473091370018665,
+              "other_optimizer_steps": 0,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "disc",
+              "k": 0,
+              "steps": 5,
+              "seconds": 5.323058971000137,
+              "other_optimizer_steps": 5,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "disc",
+              "k": 1,
+              "steps": 5,
+              "seconds": 5.320413382985862,
+              "other_optimizer_steps": 5,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "gan",
+              "k": 0,
+              "steps": 5,
+              "seconds": 6.574180631985655,
+              "other_optimizer_steps": 5,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "gan",
+              "k": 1,
+              "steps": 5,
+              "seconds": 6.574528672994347,
+              "other_optimizer_steps": 5,
+              "compiles_in_window": 0
+            }
+          ],
+          "detail_window": null,
+          "math_mode": "default",
+          "math_flags_at_end": {
+            "matmul.allow_tf32": true,
+            "cudnn.allow_tf32": true
+          },
+          "entrypoint": "src/train_stage1.py"
+        },
+        {
+          "status": "ok",
+          "error": null,
+          "rank": 4,
+          "world_size": 8,
+          "steps_per_epoch": 15,
+          "warmup": [
+            5,
+            5,
+            5
+          ],
+          "window": [
+            5,
+            5,
+            5
+          ],
+          "repeats": 2,
+          "generator_steps_seen": 45,
+          "generator_param_elements": 415352704,
+          "startup_to_first_step_s": 96.1332816159993,
+          "peak_memory_allocated_bytes": 51512912896,
+          "peak_memory_reserved_bytes": 55171874816,
+          "windows": [
+            {
+              "phase": "recon",
+              "k": 0,
+              "steps": 5,
+              "seconds": 3.452255479991436,
+              "other_optimizer_steps": 0,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "recon",
+              "k": 1,
+              "steps": 5,
+              "seconds": 3.447353822994046,
+              "other_optimizer_steps": 0,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "disc",
+              "k": 0,
+              "steps": 5,
+              "seconds": 5.323090466001304,
+              "other_optimizer_steps": 5,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "disc",
+              "k": 1,
+              "steps": 5,
+              "seconds": 5.320379067998147,
+              "other_optimizer_steps": 5,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "gan",
+              "k": 0,
+              "steps": 5,
+              "seconds": 6.574200153001584,
+              "other_optimizer_steps": 5,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "gan",
+              "k": 1,
+              "steps": 5,
+              "seconds": 6.574447234976105,
+              "other_optimizer_steps": 5,
+              "compiles_in_window": 0
+            }
+          ],
+          "detail_window": null,
+          "math_mode": "default",
+          "math_flags_at_end": {
+            "matmul.allow_tf32": true,
+            "cudnn.allow_tf32": true
+          },
+          "entrypoint": "src/train_stage1.py"
+        },
+        {
+          "status": "ok",
+          "error": null,
+          "rank": 5,
+          "world_size": 8,
+          "steps_per_epoch": 15,
+          "warmup": [
+            5,
+            5,
+            5
+          ],
+          "window": [
+            5,
+            5,
+            5
+          ],
+          "repeats": 2,
+          "generator_steps_seen": 45,
+          "generator_param_elements": 415352704,
+          "startup_to_first_step_s": 96.16503370000282,
+          "peak_memory_allocated_bytes": 51517016576,
+          "peak_memory_reserved_bytes": 55117348864,
+          "windows": [
+            {
+              "phase": "recon",
+              "k": 0,
+              "steps": 5,
+              "seconds": 3.4521556019899435,
+              "other_optimizer_steps": 0,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "recon",
+              "k": 1,
+              "steps": 5,
+              "seconds": 3.4473678449867293,
+              "other_optimizer_steps": 0,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "disc",
+              "k": 0,
+              "steps": 5,
+              "seconds": 5.323106918978738,
+              "other_optimizer_steps": 5,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "disc",
+              "k": 1,
+              "steps": 5,
+              "seconds": 5.320328759000404,
+              "other_optimizer_steps": 5,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "gan",
+              "k": 0,
+              "steps": 5,
+              "seconds": 6.57429699000204,
+              "other_optimizer_steps": 5,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "gan",
+              "k": 1,
+              "steps": 5,
+              "seconds": 6.5744524899928365,
+              "other_optimizer_steps": 5,
+              "compiles_in_window": 0
+            }
+          ],
+          "detail_window": null,
+          "math_mode": "default",
+          "math_flags_at_end": {
+            "matmul.allow_tf32": true,
+            "cudnn.allow_tf32": true
+          },
+          "entrypoint": "src/train_stage1.py"
+        },
+        {
+          "status": "ok",
+          "error": null,
+          "rank": 6,
+          "world_size": 8,
+          "steps_per_epoch": 15,
+          "warmup": [
+            5,
+            5,
+            5
+          ],
+          "window": [
+            5,
+            5,
+            5
+          ],
+          "repeats": 2,
+          "generator_steps_seen": 45,
+          "generator_param_elements": 415352704,
+          "startup_to_first_step_s": 96.19433525198838,
+          "peak_memory_allocated_bytes": 51512912896,
+          "peak_memory_reserved_bytes": 55171874816,
+          "windows": [
+            {
+              "phase": "recon",
+              "k": 0,
+              "steps": 5,
+              "seconds": 3.452170984004624,
+              "other_optimizer_steps": 0,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "recon",
+              "k": 1,
+              "steps": 5,
+              "seconds": 3.447280229011085,
+              "other_optimizer_steps": 0,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "disc",
+              "k": 0,
+              "steps": 5,
+              "seconds": 5.323125923983753,
+              "other_optimizer_steps": 5,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "disc",
+              "k": 1,
+              "steps": 5,
+              "seconds": 5.320316691999324,
+              "other_optimizer_steps": 5,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "gan",
+              "k": 0,
+              "steps": 5,
+              "seconds": 6.574205045006238,
+              "other_optimizer_steps": 5,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "gan",
+              "k": 1,
+              "steps": 5,
+              "seconds": 6.574509073980153,
+              "other_optimizer_steps": 5,
+              "compiles_in_window": 0
+            }
+          ],
+          "detail_window": null,
+          "math_mode": "default",
+          "math_flags_at_end": {
+            "matmul.allow_tf32": true,
+            "cudnn.allow_tf32": true
+          },
+          "entrypoint": "src/train_stage1.py"
+        },
+        {
+          "status": "ok",
+          "error": null,
+          "rank": 7,
+          "world_size": 8,
+          "steps_per_epoch": 15,
+          "warmup": [
+            5,
+            5,
+            5
+          ],
+          "window": [
+            5,
+            5,
+            5
+          ],
+          "repeats": 2,
+          "generator_steps_seen": 45,
+          "generator_param_elements": 415352704,
+          "startup_to_first_step_s": 96.285472795018,
+          "peak_memory_allocated_bytes": 51517016576,
+          "peak_memory_reserved_bytes": 55117348864,
+          "windows": [
+            {
+              "phase": "recon",
+              "k": 0,
+              "steps": 5,
+              "seconds": 3.4521852099860553,
+              "other_optimizer_steps": 0,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "recon",
+              "k": 1,
+              "steps": 5,
+              "seconds": 3.4473003370221704,
+              "other_optimizer_steps": 0,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "disc",
+              "k": 0,
+              "steps": 5,
+              "seconds": 5.3229827729810495,
+              "other_optimizer_steps": 5,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "disc",
+              "k": 1,
+              "steps": 5,
+              "seconds": 5.3203677750134375,
+              "other_optimizer_steps": 5,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "gan",
+              "k": 0,
+              "steps": 5,
+              "seconds": 6.5741872119833715,
+              "other_optimizer_steps": 5,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "gan",
+              "k": 1,
+              "steps": 5,
+              "seconds": 6.574536200001603,
+              "other_optimizer_steps": 5,
+              "compiles_in_window": 0
+            }
+          ],
+          "detail_window": null,
+          "math_mode": "default",
+          "math_flags_at_end": {
+            "matmul.allow_tf32": true,
+            "cudnn.allow_tf32": true
+          },
+          "entrypoint": "src/train_stage1.py"
+        }
+      ],
+      "phases_ms": {
+        "recon": 689.9623324978165,
+        "disc": 1064.3566585960798,
+        "gan": 1314.8833190003643
+      },
+      "window_ms": {
+        "recon": [
+          690.4510959982872,
+          689.4735689973459
+        ],
+        "disc": [
+          1064.6251847967505,
+          1064.088132395409
+        ],
+        "gan": [
+          1314.859398000408,
+          1314.9072400003206
+        ]
+      },
+      "weighted_ms_per_step": 1049.2221165113733
+    },
+    "baseline_b": {
+      "returncode": 0,
+      "hardware": [
+        {
+          "index": "0",
+          "name": "NVIDIA H20",
+          "total_mib": "97871",
+          "used_mib": "0",
+          "utilization": "0"
+        },
+        {
+          "index": "1",
+          "name": "NVIDIA H20",
+          "total_mib": "97871",
+          "used_mib": "0",
+          "utilization": "0"
+        },
+        {
+          "index": "2",
+          "name": "NVIDIA H20",
+          "total_mib": "97871",
+          "used_mib": "0",
+          "utilization": "0"
+        },
+        {
+          "index": "3",
+          "name": "NVIDIA H20",
+          "total_mib": "97871",
+          "used_mib": "0",
+          "utilization": "0"
+        },
+        {
+          "index": "4",
+          "name": "NVIDIA H20",
+          "total_mib": "97871",
+          "used_mib": "0",
+          "utilization": "0"
+        },
+        {
+          "index": "5",
+          "name": "NVIDIA H20",
+          "total_mib": "97871",
+          "used_mib": "0",
+          "utilization": "0"
+        },
+        {
+          "index": "6",
+          "name": "NVIDIA H20",
+          "total_mib": "97871",
+          "used_mib": "0",
+          "utilization": "0"
+        },
+        {
+          "index": "7",
+          "name": "NVIDIA H20",
+          "total_mib": "97871",
+          "used_mib": "0",
+          "utilization": "0"
+        }
+      ],
+      "device_peak_sampled_gib": {
+        "0": 93.7841796875,
+        "1": 93.7841796875,
+        "2": 93.7841796875,
+        "3": 93.7841796875,
+        "4": 93.7841796875,
+        "5": 93.7841796875,
+        "6": 93.7841796875,
+        "7": 93.7841796875
+      },
+      "wall_seconds": 180.04823968699202,
+      "environment": {},
+      "rank_results": [
+        {
+          "status": "ok",
+          "error": null,
+          "rank": 0,
+          "world_size": 8,
+          "steps_per_epoch": 15,
+          "warmup": [
+            5,
+            5,
+            5
+          ],
+          "window": [
+            5,
+            5,
+            5
+          ],
+          "repeats": 2,
+          "generator_steps_seen": 45,
+          "generator_param_elements": 415352704,
+          "startup_to_first_step_s": 24.991931221011328,
+          "peak_memory_allocated_bytes": 89200744960,
+          "peak_memory_reserved_bytes": 99010740224,
+          "windows": [
+            {
+              "phase": "recon",
+              "k": 0,
+              "steps": 5,
+              "seconds": 11.375199989008252,
+              "other_optimizer_steps": 0,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "recon",
+              "k": 1,
+              "steps": 5,
+              "seconds": 11.400188222993165,
+              "other_optimizer_steps": 0,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "disc",
+              "k": 0,
+              "steps": 5,
+              "seconds": 17.361024440004257,
+              "other_optimizer_steps": 5,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "disc",
+              "k": 1,
+              "steps": 5,
+              "seconds": 17.335151206993032,
+              "other_optimizer_steps": 5,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "gan",
+              "k": 0,
+              "steps": 5,
+              "seconds": 20.91776872900664,
+              "other_optimizer_steps": 5,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "gan",
+              "k": 1,
+              "steps": 5,
+              "seconds": 20.903011580987368,
+              "other_optimizer_steps": 5,
+              "compiles_in_window": 0
+            }
+          ],
+          "detail_window": null,
+          "math_mode": "default",
+          "math_flags_at_end": {
+            "matmul.allow_tf32": false,
+            "cudnn.allow_tf32": true
+          },
+          "entrypoint": "src/train_stage1.py"
+        },
+        {
+          "status": "ok",
+          "error": null,
+          "rank": 1,
+          "world_size": 8,
+          "steps_per_epoch": 15,
+          "warmup": [
+            5,
+            5,
+            5
+          ],
+          "window": [
+            5,
+            5,
+            5
+          ],
+          "repeats": 2,
+          "generator_steps_seen": 45,
+          "generator_param_elements": 415352704,
+          "startup_to_first_step_s": 24.99259908500244,
+          "peak_memory_allocated_bytes": 89200744960,
+          "peak_memory_reserved_bytes": 99010740224,
+          "windows": [
+            {
+              "phase": "recon",
+              "k": 0,
+              "steps": 5,
+              "seconds": 11.374862065014895,
+              "other_optimizer_steps": 0,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "recon",
+              "k": 1,
+              "steps": 5,
+              "seconds": 11.400495713984128,
+              "other_optimizer_steps": 0,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "disc",
+              "k": 0,
+              "steps": 5,
+              "seconds": 17.36050998501014,
+              "other_optimizer_steps": 5,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "disc",
+              "k": 1,
+              "steps": 5,
+              "seconds": 17.3357544579776,
+              "other_optimizer_steps": 5,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "gan",
+              "k": 0,
+              "steps": 5,
+              "seconds": 20.91757164700539,
+              "other_optimizer_steps": 5,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "gan",
+              "k": 1,
+              "steps": 5,
+              "seconds": 20.90328004999901,
+              "other_optimizer_steps": 5,
+              "compiles_in_window": 0
+            }
+          ],
+          "detail_window": null,
+          "math_mode": "default",
+          "math_flags_at_end": {
+            "matmul.allow_tf32": false,
+            "cudnn.allow_tf32": true
+          },
+          "entrypoint": "src/train_stage1.py"
+        },
+        {
+          "status": "ok",
+          "error": null,
+          "rank": 2,
+          "world_size": 8,
+          "steps_per_epoch": 15,
+          "warmup": [
+            5,
+            5,
+            5
+          ],
+          "window": [
+            5,
+            5,
+            5
+          ],
+          "repeats": 2,
+          "generator_steps_seen": 45,
+          "generator_param_elements": 415352704,
+          "startup_to_first_step_s": 24.99965357000474,
+          "peak_memory_allocated_bytes": 89200744960,
+          "peak_memory_reserved_bytes": 99010740224,
+          "windows": [
+            {
+              "phase": "recon",
+              "k": 0,
+              "steps": 5,
+              "seconds": 11.374605187011184,
+              "other_optimizer_steps": 0,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "recon",
+              "k": 1,
+              "steps": 5,
+              "seconds": 11.400518000999,
+              "other_optimizer_steps": 0,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "disc",
+              "k": 0,
+              "steps": 5,
+              "seconds": 17.36132332700072,
+              "other_optimizer_steps": 5,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "disc",
+              "k": 1,
+              "steps": 5,
+              "seconds": 17.335084401012864,
+              "other_optimizer_steps": 5,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "gan",
+              "k": 0,
+              "steps": 5,
+              "seconds": 20.919176469004015,
+              "other_optimizer_steps": 5,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "gan",
+              "k": 1,
+              "steps": 5,
+              "seconds": 20.902058564999606,
+              "other_optimizer_steps": 5,
+              "compiles_in_window": 0
+            }
+          ],
+          "detail_window": null,
+          "math_mode": "default",
+          "math_flags_at_end": {
+            "matmul.allow_tf32": false,
+            "cudnn.allow_tf32": true
+          },
+          "entrypoint": "src/train_stage1.py"
+        },
+        {
+          "status": "ok",
+          "error": null,
+          "rank": 3,
+          "world_size": 8,
+          "steps_per_epoch": 15,
+          "warmup": [
+            5,
+            5,
+            5
+          ],
+          "window": [
+            5,
+            5,
+            5
+          ],
+          "repeats": 2,
+          "generator_steps_seen": 45,
+          "generator_param_elements": 415352704,
+          "startup_to_first_step_s": 24.98799938999582,
+          "peak_memory_allocated_bytes": 89200744960,
+          "peak_memory_reserved_bytes": 99010740224,
+          "windows": [
+            {
+              "phase": "recon",
+              "k": 0,
+              "steps": 5,
+              "seconds": 11.375788626988651,
+              "other_optimizer_steps": 0,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "recon",
+              "k": 1,
+              "steps": 5,
+              "seconds": 11.401787338021677,
+              "other_optimizer_steps": 0,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "disc",
+              "k": 0,
+              "steps": 5,
+              "seconds": 17.35974056800478,
+              "other_optimizer_steps": 5,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "disc",
+              "k": 1,
+              "steps": 5,
+              "seconds": 17.33684648099006,
+              "other_optimizer_steps": 5,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "gan",
+              "k": 0,
+              "steps": 5,
+              "seconds": 20.919149477995234,
+              "other_optimizer_steps": 5,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "gan",
+              "k": 1,
+              "steps": 5,
+              "seconds": 20.90187971200794,
+              "other_optimizer_steps": 5,
+              "compiles_in_window": 0
+            }
+          ],
+          "detail_window": null,
+          "math_mode": "default",
+          "math_flags_at_end": {
+            "matmul.allow_tf32": false,
+            "cudnn.allow_tf32": true
+          },
+          "entrypoint": "src/train_stage1.py"
+        },
+        {
+          "status": "ok",
+          "error": null,
+          "rank": 4,
+          "world_size": 8,
+          "steps_per_epoch": 15,
+          "warmup": [
+            5,
+            5,
+            5
+          ],
+          "window": [
+            5,
+            5,
+            5
+          ],
+          "repeats": 2,
+          "generator_steps_seen": 45,
+          "generator_param_elements": 415352704,
+          "startup_to_first_step_s": 24.99698364699725,
+          "peak_memory_allocated_bytes": 89200744960,
+          "peak_memory_reserved_bytes": 99010740224,
+          "windows": [
+            {
+              "phase": "recon",
+              "k": 0,
+              "steps": 5,
+              "seconds": 11.375157587986905,
+              "other_optimizer_steps": 0,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "recon",
+              "k": 1,
+              "steps": 5,
+              "seconds": 11.400345739006298,
+              "other_optimizer_steps": 0,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "disc",
+              "k": 0,
+              "steps": 5,
+              "seconds": 17.360579336003866,
+              "other_optimizer_steps": 5,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "disc",
+              "k": 1,
+              "steps": 5,
+              "seconds": 17.335327273991425,
+              "other_optimizer_steps": 5,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "gan",
+              "k": 0,
+              "steps": 5,
+              "seconds": 20.917654303018935,
+              "other_optimizer_steps": 5,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "gan",
+              "k": 1,
+              "steps": 5,
+              "seconds": 20.90363914699992,
+              "other_optimizer_steps": 5,
+              "compiles_in_window": 0
+            }
+          ],
+          "detail_window": null,
+          "math_mode": "default",
+          "math_flags_at_end": {
+            "matmul.allow_tf32": false,
+            "cudnn.allow_tf32": true
+          },
+          "entrypoint": "src/train_stage1.py"
+        },
+        {
+          "status": "ok",
+          "error": null,
+          "rank": 5,
+          "world_size": 8,
+          "steps_per_epoch": 15,
+          "warmup": [
+            5,
+            5,
+            5
+          ],
+          "window": [
+            5,
+            5,
+            5
+          ],
+          "repeats": 2,
+          "generator_steps_seen": 45,
+          "generator_param_elements": 415352704,
+          "startup_to_first_step_s": 24.986230954993516,
+          "peak_memory_allocated_bytes": 89200744960,
+          "peak_memory_reserved_bytes": 99010740224,
+          "windows": [
+            {
+              "phase": "recon",
+              "k": 0,
+              "steps": 5,
+              "seconds": 11.375589188974118,
+              "other_optimizer_steps": 0,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "recon",
+              "k": 1,
+              "steps": 5,
+              "seconds": 11.400415470008738,
+              "other_optimizer_steps": 0,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "disc",
+              "k": 0,
+              "steps": 5,
+              "seconds": 17.361887785984436,
+              "other_optimizer_steps": 5,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "disc",
+              "k": 1,
+              "steps": 5,
+              "seconds": 17.33625579799991,
+              "other_optimizer_steps": 5,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "gan",
+              "k": 0,
+              "steps": 5,
+              "seconds": 20.91663371800678,
+              "other_optimizer_steps": 5,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "gan",
+              "k": 1,
+              "steps": 5,
+              "seconds": 20.900512601976516,
+              "other_optimizer_steps": 5,
+              "compiles_in_window": 0
+            }
+          ],
+          "detail_window": null,
+          "math_mode": "default",
+          "math_flags_at_end": {
+            "matmul.allow_tf32": false,
+            "cudnn.allow_tf32": true
+          },
+          "entrypoint": "src/train_stage1.py"
+        },
+        {
+          "status": "ok",
+          "error": null,
+          "rank": 6,
+          "world_size": 8,
+          "steps_per_epoch": 15,
+          "warmup": [
+            5,
+            5,
+            5
+          ],
+          "window": [
+            5,
+            5,
+            5
+          ],
+          "repeats": 2,
+          "generator_steps_seen": 45,
+          "generator_param_elements": 415352704,
+          "startup_to_first_step_s": 24.9644251660211,
+          "peak_memory_allocated_bytes": 89200744960,
+          "peak_memory_reserved_bytes": 99010740224,
+          "windows": [
+            {
+              "phase": "recon",
+              "k": 0,
+              "steps": 5,
+              "seconds": 11.374823929014383,
+              "other_optimizer_steps": 0,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "recon",
+              "k": 1,
+              "steps": 5,
+              "seconds": 11.400587778975023,
+              "other_optimizer_steps": 0,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "disc",
+              "k": 0,
+              "steps": 5,
+              "seconds": 17.360818396991817,
+              "other_optimizer_steps": 5,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "disc",
+              "k": 1,
+              "steps": 5,
+              "seconds": 17.33550757402554,
+              "other_optimizer_steps": 5,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "gan",
+              "k": 0,
+              "steps": 5,
+              "seconds": 20.917263040988473,
+              "other_optimizer_steps": 5,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "gan",
+              "k": 1,
+              "steps": 5,
+              "seconds": 20.903505413007224,
+              "other_optimizer_steps": 5,
+              "compiles_in_window": 0
+            }
+          ],
+          "detail_window": null,
+          "math_mode": "default",
+          "math_flags_at_end": {
+            "matmul.allow_tf32": false,
+            "cudnn.allow_tf32": true
+          },
+          "entrypoint": "src/train_stage1.py"
+        },
+        {
+          "status": "ok",
+          "error": null,
+          "rank": 7,
+          "world_size": 8,
+          "steps_per_epoch": 15,
+          "warmup": [
+            5,
+            5,
+            5
+          ],
+          "window": [
+            5,
+            5,
+            5
+          ],
+          "repeats": 2,
+          "generator_steps_seen": 45,
+          "generator_param_elements": 415352704,
+          "startup_to_first_step_s": 24.991386718000285,
+          "peak_memory_allocated_bytes": 89200744960,
+          "peak_memory_reserved_bytes": 99010740224,
+          "windows": [
+            {
+              "phase": "recon",
+              "k": 0,
+              "steps": 5,
+              "seconds": 11.375380901008612,
+              "other_optimizer_steps": 0,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "recon",
+              "k": 1,
+              "steps": 5,
+              "seconds": 11.400181812990922,
+              "other_optimizer_steps": 0,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "disc",
+              "k": 0,
+              "steps": 5,
+              "seconds": 17.361130859004334,
+              "other_optimizer_steps": 5,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "disc",
+              "k": 1,
+              "steps": 5,
+              "seconds": 17.334026019001612,
+              "other_optimizer_steps": 5,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "gan",
+              "k": 0,
+              "steps": 5,
+              "seconds": 20.918363103002775,
+              "other_optimizer_steps": 5,
+              "compiles_in_window": 0
+            },
+            {
+              "phase": "gan",
+              "k": 1,
+              "steps": 5,
+              "seconds": 20.903069366991986,
+              "other_optimizer_steps": 5,
+              "compiles_in_window": 0
+            }
+          ],
+          "detail_window": null,
+          "math_mode": "default",
+          "math_flags_at_end": {
+            "matmul.allow_tf32": false,
+            "cudnn.allow_tf32": true
+          },
+          "entrypoint": "src/train_stage1.py"
+        }
+      ],
+      "phases_ms": {
+        "recon": 2277.757596501033,
+        "disc": 3469.8734266974498,
+        "gan": 4182.281561600394
+      },
+      "window_ms": {
+        "recon": [
+          2275.1577253977302,
+          2280.3574676043354
+        ],
+        "disc": [
+          3472.377557196887,
+          3467.3692961980123
+        ],
+        "gan": [
+          4183.835293800803,
+          4180.727829399984
+        ]
+      },
+      "weighted_ms_per_step": 3379.0340578252653
+    }
+  },
+  "complete": true,
+  "notes": [
+    "Same current trainer (accumulation 1) in both arms; baseline disables all optimization flags.",
+    "Each reported iteration consumes 512 images globally. Eight physical NVIDIA H20 GPUs; 8 x 64 x 1 = 512.",
+    "Short phase-compressed timing does not supply trained-checkpoint PSNR or rFID."
+  ],
+  "baseline_weighted_ms": 3375.79929421845,
+  "baseline_relative_spread": 0.0019164430849637627,
+  "speedup": 3.217430552686846,
+  "environment_versions": {
+    "ready": true,
+    "python": "3.10.20 (main, Jun 11 2026, 15:17:37) [GCC 14.3.0]",
+    "versions": {
+      "torch": "2.8.0+cu128",
+      "torchvision": "0.23.0+cu128",
+      "triton": "3.4.0",
+      "transformers": "4.56.2",
+      "timm": "0.9.16",
+      "numpy": "1.26.0",
+      "omegaconf": "2.3.0",
+      "torchmetrics": "1.9.0",
+      "torch-fidelity": "0.4.0",
+      "wandb": "0.30.0",
+      "scipy": "1.15.3",
+      "Pillow": "12.3.0"
+    },
+    "gpu": {
+      "name": "NVIDIA H20",
+      "capability": [
+        9,
+        0
+      ],
+      "total_gib": 95.00494384765625,
+      "cuda": "12.8",
+      "cudnn": 91002,
+      "bf16": true
+    },
+    "compile_backward_ok": true,
+    "attention_backends": {
+      "cudnn": true,
+      "flash": true
+    },
+    "dataset_images": 7680,
+    "driver_version": "535.183.06",
+    "tools_available": {
+      "gcc": true,
+      "g++": true,
+      "ninja": true,
+      "nvidia-smi": true,
+      "nsys": false,
+      "ncu": false
+    }
+  },
+  "timing_config": {
+    "stage_1": {
+      "target": "stage1.RAE",
+      "params": {
+        "encoder_cls": "Dinov2withNorm",
+        "encoder_config_path": "facebook/dinov2-with-registers-base",
+        "encoder_input_size": 224,
+        "encoder_params": {
+          "dinov2_path": "facebook/dinov2-with-registers-base",
+          "normalize": true
+        },
+        "decoder_config_path": "configs/decoder/ViTXL",
+        "noise_tau": 0.8,
+        "reshape_to_2d": true
+      }
+    },
+    "training": {
+      "epochs": 3,
+      "ema_decay": 0.9978,
+      "global_batch_size": 512,
+      "num_workers": 4,
+      "clip_grad": 0.0,
+      "log_interval": 5,
+      "checkpoint_interval": 0,
+      "sample_every": 0,
+      "optimizer": {
+        "lr": 0.0002,
+        "betas": [
+          0.9,
+          0.95
+        ],
+        "weight_decay": 0.0
+      },
+      "scheduler": {
+        "type": "cosine",
+        "warmup_epochs": 1,
+        "decay_end_epoch": 16,
+        "base_lr": 0.0002,
+        "final_lr": 2e-05,
+        "warmup_from_zero": true
+      },
+      "expected_world_size": 8,
+      "micro_batch_size": 64,
+      "gradient_accumulation_steps": 1
+    },
+    "gan": {
+      "disc": {
+        "arch": {
+          "dino_ckpt_path": "models/discs/dino_vit_small_patch8_224.pth",
+          "ks": 9,
+          "norm_type": "bn",
+          "using_spec_norm": true,
+          "recipe": "S_8"
+        },
+        "optimizer": {
+          "lr": 0.0002,
+          "betas": [
+            0.9,
+            0.95
+          ],
+          "weight_decay": 0.0
+        },
+        "scheduler": {
+          "type": "cosine",
+          "warmup_epochs": 1,
+          "decay_end_epoch": 16,
+          "base_lr": 0.0002,
+          "final_lr": 2e-05,
+          "warmup_from_zero": true
+        },
+        "augment": {
+          "prob": 1.0,
+          "cutout": 0.0
+        }
+      },
+      "loss": {
+        "disc_loss": "hinge",
+        "gen_loss": "vanilla",
+        "disc_weight": 0.75,
+        "perceptual_weight": 1.0,
+        "disc_start": 2,
+        "disc_upd_start": 1,
+        "lpips_start": 0,
+        "max_d_weight": 10000.0,
+        "disc_updates": 1
+      }
+    }
+  },
+  "quality": {
+    "psnr": null,
+    "rfid": null,
+    "status": "not_evaluated",
+    "reason": "Full-training quality of fd7800d0633a is documented separately; the current accumulation/DDP trainer has not completed a matching training run."
+  },
+  "benchmark_driver_sha256": "d3543630c8fe89dbaadd33e8fdf9771d45a91c32e9bff0b3378eff90b6d870a6"
+}

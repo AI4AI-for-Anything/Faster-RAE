@@ -18,3 +18,7 @@ upload_to_hf.py
 /ckpts/
 data
 models
+/.venv/
+/runs/
+/profiles/
+*.trace.json
