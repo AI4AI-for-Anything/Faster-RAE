@@ -237,7 +237,7 @@
       "speedup": 5.414431577239851,
       "source": "h200-benchmark.json",
       "optimized_weighted_ms": 1547.9022972169332,
-      "hardware_label": "H200-class (device reports NVIDIA L20X)"
+      "hardware_label": "NVIDIA H200"
     }
   ]
 }
