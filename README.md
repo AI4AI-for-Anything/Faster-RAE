@@ -31,7 +31,7 @@ For another GPU count or memory budget, use the [GPU adaptation guide](docs/gpu-
 
 ## Agent Optimization History
 
-The earlier optimization sequence used **2 H200 GPUs, 64 images per GPU, global batch 128**, and the same 6:2:8 phase weighting. Its retained final configuration measured **345.13 ms/step**, **5.3167×** the same-run reference, and **48.52 GiB** peak memory.
+The earlier optimization sequence used **2 H200 GPUs, 64 images per GPU, global batch 128**, and the same 6:2:8 phase weighting. Its retained final configuration measured **345.13 ms/step**, **5.3167×** the same-run baseline, and **48.52 GiB** peak memory.
 
 ![Earlier H200 optimization sequence, global batch 128](docs/performance-views/01-paper.svg)
 

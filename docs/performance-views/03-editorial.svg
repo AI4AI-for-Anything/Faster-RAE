@@ -324,7 +324,7 @@ z
    <text style="fill: #806b6f; font: 10.5px 'DejaVu Sans'; text-anchor: end" x="609.12" y="62.0928" transform="rotate(-0 609.12 62.0928)">total speedup</text>
   </g>
   <g id="text_26">
-   <text style="fill: #806b6f; font: 700 11px 'DejaVu Sans'; text-anchor: start" x="58.32" y="104.544" transform="rotate(-0 58.32 104.544)">REFERENCE</text>
+   <text style="fill: #806b6f; font: 700 11px 'DejaVu Sans'; text-anchor: start" x="58.32" y="104.544" transform="rotate(-0 58.32 104.544)">BASELINE</text>
   </g>
   <g id="text_27">
    <text style="fill: #8c0000; font: 700 24px 'DejaVu Sans'; text-anchor: start" x="58.32" y="131.7888" transform="rotate(-0 58.32 131.7888)">1,835.53 ms</text>
@@ -339,7 +339,7 @@ z
    <text style="fill: #8c0000; font: 700 13px 'DejaVu Sans'; text-anchor: start" x="68.04" y="383.328" transform="rotate(-0 68.04 383.328)">B</text>
   </g>
   <g id="text_31">
-   <text style="fill: #302326; font: 700 12.5px 'DejaVu Sans'; text-anchor: start" x="93.312" y="383.328" transform="rotate(-0 93.312 383.328)">Reference</text>
+   <text style="fill: #302326; font: 700 12.5px 'DejaVu Sans'; text-anchor: start" x="93.312" y="383.328" transform="rotate(-0 93.312 383.328)">Baseline</text>
   </g>
   <g id="text_32">
    <text style="fill: #806b6f; font: 12px 'DejaVu Sans'; text-anchor: start" x="93.312" y="400.4352" transform="rotate(-0 93.312 400.4352)">1,835.53 ms</text>

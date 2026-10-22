@@ -33,6 +33,8 @@ def load():
     assert stages[0]["kind"] == "reference"
     for i, stage in enumerate(stages):
         stage["display_id"] = "B" if i == 0 else str(i)
+        if stage["kind"] == "reference":
+            stage["label"] = "Baseline"
     assert len({s["id"] for s in stages}) == len(stages)
     assert all(math.isfinite(s["iter_ms"]) and s["iter_ms"] > 0 for s in stages)
     assert all(math.isfinite(s["speedup"]) and s["speedup"] > 0 for s in stages)
@@ -125,7 +127,7 @@ def editorial(data, stages):
     theme = WARM
     fig = plt.figure(figsize=(9, 8.8), facecolor=theme["bg"])
     heading(fig, theme, "Agent Optimization History", stages[-1]["speedup"])
-    for x, label, stage in [(.09, "REFERENCE", stages[0]), (.53, "FINAL", stages[-1])]:
+    for x, label, stage in [(.09, "BASELINE", stages[0]), (.53, "FINAL", stages[-1])]:
         fig.text(x, .835, label, fontsize=11, color=theme["muted"], weight="bold")
         fig.text(x, .792, f"{stage['iter_ms']:,.2f} ms", fontsize=24, color=theme["accent"], weight="bold")
     speed_axis(fig.add_axes([.09, .487, .85, .25]), stages, theme)
