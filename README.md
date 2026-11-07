@@ -58,6 +58,10 @@ We completed **16 epochs of ImageNet training on 8 H20 GPUs** and evaluated the 
 
 The completed run reached 40,032 generator updates. A separate eight-H20 timing run measured **3.22×** speedup at global batch 512. See [H20 results](docs/h20-results.md) for training quality, timing and test conditions.
 
+## TPU v6e (experimental)
+
+On a 64-chip TPU v6e slice, with torch_xla 2.9 and global batch 512 (8 images per chip), the 6:2:8-weighted Stage-1 step went from 4,889 ms for the upstream code to 363.9 ms (13.4×). This was measured with baseline-candidate-baseline timing on synthetic images. The statistical gate did not certify the change; it was adopted with a resolution statement, and no long training was run. These figures are not comparable with the GPU results above. See [TPU v6e results](docs/tpu-v6e-results.md) for conditions and limitations, and [`tpu_smoke/`](tpu_smoke/README.md) for the commands.
+
 ## Upstream RAE documentation
 
 Based on [bytetriper/RAE](https://github.com/bytetriper/RAE), by Boyang Zheng, Nanye Ma, Shengbang Tong and Saining Xie. [Paper](https://arxiv.org/abs/2510.11690) · [Project page](https://rae-dit.github.io/) · [MIT license](LICENSE). The original README and upstream authorship are retained below.
